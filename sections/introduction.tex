@@ -1,0 +1,110 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{CXRS Diagnostics}
+\subsubsection{CXRS for Plasma Measurements}
+The Charge Exchange Recombination Spectroscopy (CXRS) diagnostic measures
+line emissions of several low $Z$ impurities in the plasma due to interaction
+with a neutral beam.
+
+Measured parameters:
+\begin{itemize}
+    \item Line’s width~--~ion temperature;
+    \item Line center’s shift~–-~toroidal and poloidal velocities;
+    \item Line’s intensity~–-~impurity's density and $Z_\text{eff}$.
+\end{itemize}
+
+\begin{table}[ht]
+    \centering
+    % \caption{}%
+    % \label{}
+    % \begin{tabularx}{0.5\textwidth}{l c r} \toprule
+    \begin{tabular}[]{l l l}
+        \toprule
+        % Ion         & Transition & Wavelength, nm \\
+        % \midrule
+        BeIV        & $6\to5$   & 465.8 nm \\
+        BeIV        & $8\to6$   & 468.5 nm \\
+        HeII        & $4\to3$   & 468.5 nm \\
+        \midrule
+        ArXVIII     & $16\to15$ & 522.5 nm \\
+        NeX         & $11\to10$ & 524.9 nm \\
+        CVI         & $8\to7$   & 529.1 nm \\
+        \midrule
+        H$\upalpha$ &           & 656.3 nm \\
+        MSE         &           & 659.1 nm \\
+        \bottomrule
+    \end{tabular}
+    % \end{tabularx}
+\end{table}
+
+\subsubsection{CXRS in ITER}
+\paragraph{Geometry}
+\paragraph{Equipment}
+\paragraph{IMAS Database}
+
+\subsection{Development of the New Simulation Code}
+\subsubsection{Existing Code}
+Simulation of Spectra (SOS) code by M. G. von Hellermann~\cite{sos}
+
+Features:
+\begin{itemize}
+    \item Simulation takes into account many physical effects (halo effect, crossection effect, plume effect and others);
+    \item Written in Matlab;
+    \item Has Graphical User Interface~(\cref{fig:sos_interface}).
+\end{itemize}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/sos_interface}
+    \caption{SOS interface.}%
+    \label{fig:sos_interface}
+\end{figure}
+
+\subsubsection{Motivation}
+Existing code (Simulation of Spectra - SOS) lacks some features:
+\begin{itemize}
+    \item Simplified plasma, tokamak and diagnostic geometry \\
+          (e.g. elliptical plasma, point emission and others);
+    \item Does not take reflections into account;
+    \item Cannot use data from IMAS directly;
+    \item Requires Matlab license, hard to extend by new developers.
+\end{itemize}
+
+The goal was to create an open and extensible simulation code using Python.
+
+Sub goals:
+\begin{itemize}
+    \item Implement interaction with IMAS database (read and write);
+    \item Use IMAS data to create a plasma and diagnostic beam with spatial distributions;
+    \item Use a ray-tracing engine to simulate spectra, this includes how reflections affect simulated spectra;
+    \item Ensure that emission models include all physics already captured by SOS.
+\end{itemize}
+
+
+\subsection{Raysect and CHERAB}
+
+\textbf{Raysect}~\cite{raysect} is a ray-tracing framework for Python designed for scientific purposes.
+\begin{itemize}
+    \item Supports scientific ray-tracing of spectra from physical light sources such as plasmas.
+    \item Easily extensible, written with user customisation of materials and emissive sources in mind.
+    \item Different observer types supported such as pinhole cameras and optical fibres.
+\end{itemize}
+
+\textbf{CHERAB}~\cite{cherab} is a Python library for forward modelling diagnostics based on spectroscopic plasma emission which provides physical models for Raysect.
+Provided models for Raysect:
+\begin{itemize}
+    \item Tools for plasma and diagnostic beam simulations;
+    \item Physical emission models (active charge exchange, bremsstrahlung and more).
+\end{itemize}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/raysect_demo}
+    \caption{Demonstration of Raysect features.}%
+    \label{fig:raysect_demo}
+\end{figure}
+
+\end{document}
