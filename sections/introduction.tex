@@ -4,40 +4,61 @@
 
 \subsection{CXRS Diagnostics}
 \subsubsection{CXRS for Plasma Measurements}
-The Charge Exchange Recombination Spectroscopy (CXRS) diagnostic measures
-line emissions of several low $Z$ impurities in the plasma due to interaction
-with a neutral beam.
+The Charge Exchange Recombination Spectroscopy (CXRS) diagnostic measures line emissions of several low $Z$ impurities in the plasma due to interaction with a neutral beam.
 
 Measured parameters:
 \begin{itemize}
-    \item Line’s width~--~ion temperature;
-    \item Line center’s shift~–-~toroidal and poloidal velocities;
-    \item Line’s intensity~–-~impurity's density and $Z_\text{eff}$.
+    \item Line’s width~--~ion temperature:
+          \begin{equation}
+              \label{eq:ion_temperature}
+              kT_\text{ion} = mc^2 \dfrac{{\Delta\lambda}_\text{Dopp}^2}{\lambda_{0}^{2}}
+          \end{equation}
+
+    \item Line center’s shift~–-~toroidal and poloidal velocities:
+          \begin{equation}
+              \label{eq:rotational_velocity}
+              v_\text{rot} = c \dfrac{\Delta\lambda_\text{rot}}{\lambda_{0}}
+          \end{equation}
+
+    \item Line’s intensity~–-~impurity's density and $Z_\text{eff}$:
+          \begin{equation}
+              \label{eq:impurity_density}
+              n_\text{imp} = \dfrac{4\pi \int I(\lambda)\, d\lambda}{n_\text{b} Q_\text{CX}^\text{eff}(v_\text{b})\, dl}
+          \end{equation}
+
 \end{itemize}
 
 \begin{table}[ht]
     \centering
-    % \caption{}%
-    % \label{}
-    % \begin{tabularx}{0.5\textwidth}{l c r} \toprule
     \begin{tabular}[]{l l l}
         \toprule
-        % Ion         & Transition & Wavelength, nm \\
-        % \midrule
-        BeIV        & $6\to5$   & 465.8 nm \\
-        BeIV        & $8\to6$   & 468.5 nm \\
-        HeII        & $4\to3$   & 468.5 nm \\
+        Ion         & Transition & Wavelength, nm \\
         \midrule
-        ArXVIII     & $16\to15$ & 522.5 nm \\
-        NeX         & $11\to10$ & 524.9 nm \\
-        CVI         & $8\to7$   & 529.1 nm \\
+        BeIV        & $6\to5$    & 465.8 nm       \\
+        BeIV        & $8\to6$    & 468.5 nm       \\
+        HeII        & $4\to3$    & 468.5 nm       \\
         \midrule
-        H$\upalpha$ &           & 656.3 nm \\
-        MSE         &           & 659.1 nm \\
+        ArXVIII     & $16\to15$  & 522.5 nm       \\
+        NeX         & $11\to10$  & 524.9 nm       \\
+        CVI         & $8\to7$    & 529.1 nm       \\
+        \midrule
+        H$\upalpha$ &            & 656.3 nm       \\
+        MSE         &            & 659.1 nm       \\
         \bottomrule
     \end{tabular}
-    % \end{tabularx}
+    \caption{Spectroscopic lines observed by CXRS}%
+    \label{tab:cxrs_lines}
 \end{table}
+
+\begin{equation}
+    \label{eq:main_reaction_first}
+    X^{Z+} + H^0 \to X^{(Z-1)+}(n_2) + H^+
+\end{equation}
+
+\begin{equation}
+    \label{eq:main_reaction_second}
+    X^{(Z-1)+}(n_2) \to X^{(Z-1)+}(n_1) + h\nu
+\end{equation}
 
 \subsubsection{CXRS in ITER}
 \paragraph{Geometry}

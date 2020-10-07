@@ -1,63 +1,59 @@
-\documentclass[a4paper,12pt,oneside,english]{article} % язык документа задаётся здесь
+\documentclass[draft,a4paper,12pt,oneside,english]{article}
 
-\usepackage{geometry}   % отступы на странице
-\geometry{left=0.75in}  % "средние" поля из Word
+\usepackage{geometry}
+\geometry{left=0.75in}
 \geometry{right=0.75in}
 \geometry{top=1in}
 \geometry{bottom=1in}
 
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 
-\usepackage{cmap}           % позволяет копировать текст из полученного PDF
-\usepackage{mathtext}       % русский текст в формулах
-\usepackage[utf8]{inputenc} % кодировка
-\usepackage[T2A]{fontenc}   % шрифты
-\usepackage{babel}          % локализация названий
-\usepackage{indentfirst}    % отступ в первой строке параграфа
+\usepackage{cmap}
+\usepackage{mathtext}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{babel}
+\usepackage{indentfirst}
 
-\usepackage{mathtools,amssymb,amsfonts} % математические символы и окружения
+\usepackage{mathtools,amssymb,amsfonts}
 \usepackage{upgreek}
-% \usepackage{icomma}                     % определение запятой как десятичного разделителя
 
-\frenchspacing        % пробел между предложеиями больше чем между словами
-\usepackage{setspace} % промежуток между строками
-\onehalfspacing% полуторный промежуток
+\frenchspacing
+\usepackage{setspace}
+\onehalfspacing%
 
-\usepackage{caption}                   % настройка подписей к рисункам и таблицам
-% \captionsetup{labelfont=bf}            % "рис. 1" жирным шрифтом
-\captionsetup{labelsep=period}          % после "рис. 1" идёт пробел
-\captionsetup{justification=centering} % подпись выравнивается по центру
-\captionsetup{width=0.8\textwidth}     % ширина подписи
-\captionsetup{font=singlespacing}      % единичный промежуток между строками в подписи, использует setspace
-% \captionsetup[figure]{position=below}  % у рисунков подпись всегда снизу
-% \captionsetup[table]{position=above}   % у таблиц -- сверху
-% \captionsetup[figure]{name=Fig.}    % "Рисунок" вместо "Рис"
+\usepackage{caption}
+\captionsetup{labelsep=period}
+\captionsetup{justification=centering}
+\captionsetup{width=0.75\textwidth}
+\captionsetup{font=singlespacing}
 
-\usepackage{subcaption}                       % настройка подписей к subfigure
-\renewcommand\thesubfigure{\asbuk{subfigure}} % subfigure нумеруются русскими буквами
+\usepackage{subcaption}
+\renewcommand\thesubfigure{\asbuk{subfigure}}
 
-\usepackage{placeins} % не позволяет рисункам и таблицам выходить за пределы своей секции
+\usepackage{placeins}
 
-\usepackage{graphicx} % работа с рисунками
+\usepackage{graphicx}
+\graphicspath{images/}
 
-\usepackage{enumitem} % оформление списков
-\setlist{nosep}       % убрать промежуток между строками в списке
+\usepackage{enumitem}
+\setlist{nosep}
 
-\usepackage{tabularx} % таблицы с автоматическим определением ширины столбцов
-\usepackage{booktabs} % красивые таблицы
+\usepackage{tabularx}
+\usepackage{booktabs}
 
-\usepackage{csquotes} % окружение для кавычек \enquote{}
-
-\usepackage{hyperref} % гиперссылки в тексте
-\hypersetup{unicode=true,pdftitle={Title},pdfauthor={Author},colorlinks=true}
-
-\usepackage{cleveref} % "умные" ссылки
+\usepackage{csquotes}
 
 \usepackage{subfiles}
 
 \usepackage[style=numeric,sorting=none]{biblatex}
-\addbibresource{references.bib}
-\addbibresource{literature.bib}
+\addbibresource{software.bib}
+
+\usepackage{minted}
+
+\usepackage{hyperref}
+\hypersetup{unicode=true,pdftitle={Title},pdfauthor={Author},colorlinks=true}
+\usepackage{cleveref}
 
 \title{Simulation of CXRS Spectra Using Raysect and CHERAB Frameworks}
 \author{Aleksei Shabashov}
