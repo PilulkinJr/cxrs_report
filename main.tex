@@ -1,4 +1,4 @@
-\documentclass[draft,a4paper,12pt,oneside,english]{article}
+\documentclass[a4paper,12pt,titlepage,english,final]{article}
 
 \usepackage{geometry}
 \geometry{left=0.75in}
@@ -6,12 +6,12 @@
 \geometry{top=1in}
 \geometry{bottom=1in}
 
-\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+\usepackage[activate={true,nocompatibility},tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 
 \usepackage{cmap}
 \usepackage{mathtext}
 \usepackage[utf8]{inputenc}
-\usepackage[T2A]{fontenc}
+% \usepackage[T2A]{fontenc}
 \usepackage{babel}
 \usepackage{indentfirst}
 
@@ -34,7 +34,6 @@
 \usepackage{placeins}
 
 \usepackage{graphicx}
-\graphicspath{images/}
 
 \usepackage{enumitem}
 \setlist{nosep}
@@ -42,41 +41,62 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 
-\usepackage{csquotes}
-
 \usepackage{subfiles}
 
 \usepackage[style=numeric,sorting=none]{biblatex}
 \addbibresource{software.bib}
+\addbibresource{iter.bib}
 
 \usepackage{minted}
 
+\usepackage{csquotes}
+
+\usepackage{url}
 \usepackage{hyperref}
 \hypersetup{unicode=true,pdftitle={Title},pdfauthor={Author},colorlinks=true}
 \usepackage{cleveref}
 
-\title{Simulation of CXRS Spectra Using Raysect and CHERAB Frameworks}
+\title{Simulation of CXRS spectra using Raysect and CHERAB frameworks}
 \author{Aleksei Shabashov}
 \date{}
 
 \begin{document}
 
-\section{Purpose}
+\maketitle
+\tableofcontents
+
+\section{Purpose}%
+\label{sec:purpose}
 
 
-\section{Scope}
+\section{Scope}%
+\label{sec:scope}
+This document is applicable to the 55.EC CXRS Edge diagnostic. The CXRS Edge system is an optical diagnostic that collects the light emitted by the plasma upon interaction with the Diagnostic Neutral Beam (DNB) and analyses this light to extract the ion temperature, plasma rotation velocities and impurity content of the plasma. An overview of the CXRS Edge system is given in the Design Description document (DDD)~\cite{ddd_cxrs_edge}.
 
 
-\section{Definitions}
+\section{Definitions}%
+\label{sec:definitions}
 
-\section{Introduction}
+For a complete list of ITER abbreviations see~\cite{iter_abbr}. Below abbreviations used in this document are given.
+
+\begin{table}[ht]
+    \begin{tabular}{l l}
+        CXRS & Charge eXchange Recombination Spectroscopy \\
+        DNB  & Diagnostic Neutral Beam                    \\
+    \end{tabular}
+\end{table}
+
+\section{Introduction}%
+\label{sec:introduction}
 \subfile{sections/introduction}
 
-\section{For Users}
+\section{For Users}%
+\label{sec:users}
 \subfile{sections/users}
 
 
-\section{For Developers}
+\section{For Developers}%
+\label{sec:developers}
 \subfile{sections/developers}
 
 \printbibliography%

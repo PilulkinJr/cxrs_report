@@ -2,24 +2,212 @@
 
 \begin{document}
 
-\subsection{Quick Example}
+\subsection{Installation}
+
+Clone this repository then go to its root folder:
+
 \begin{minted}{bash}
-    cxrs simulate -s 134000 -r 30 -c config.xml
+    git clone ssh://git@git.iter.org/diag/cxrs.git
+    cd cxrs
 \end{minted}
 
-\subsection{Setting Simulation Parameters}
-\subsection{Using Command Line Interface}
-\subsubsection{Gathering Information from IMAS}
-\paragraph{\texttt{info}}
-\paragraph{\texttt{composition}}
-\subsubsection{Creating Simulation Environment}
-\paragraph{\texttt{create\_env}}
-\paragraph{\texttt{create\_config}}
-\paragraph{\texttt{populate}}
-\subsubsection{Reading from and Writing to IMAS}
-\paragraph{\texttt{read\_ids\_config}}
-\paragraph{\texttt{write\_ids\_config}}
-\subsubsection{Performing Simulation}
-\paragraph{\texttt{simulate}}
+At first you have to load all modules needed:
+
+\begin{minted}{bash}
+    source env.sh
+\end{minted}
+
+This will purge all loaded modules and will load modules necessary to install and use \texttt{cxrs}.
+
+To install \texttt{cxrs} on your computer run
+
+\begin{minted}{bash}
+    pip install --user .
+\end{minted}
+
+while in the the \texttt{cxrs} root directory.
+
+\emph{Note:} you can omit \texttt{python -m} part later by adding \texttt{\$HOME/.local/bin} to your \texttt{PATH}. To do so, locate file \texttt{.bashrc} in your home directory and add the following line at the end of the file:
+
+\begin{minted}{bash}
+    export PATH="$PATH:/home/ITER/<username>/.local/bin"
+\end{minted}
+
+where \texttt{<username>} is your username at ITER GPC. You can look at it by executing next command via command line:
+
+\begin{minted}{bash}
+    echo $USER
+\end{minted}
+
+\subsection{Preparations for the first run}
+
+\begin{enumerate}[label = Step \arabic*:, align = left]
+
+    \item Create environment file
+
+          In order to create environment file, run
+
+          \begin{minted}{bash}
+            python -m cxrs create-env
+          \end{minted}
+
+          This will create the default environment file, that loads all needed modules. To do so, run
+
+          \begin{minted}{bash}
+    source env.sh
+\end{minted}
+
+          It will purge all loaded modules and will load modules necessary to use \texttt{cxrs}.
+
+          \emph{Note:} you have to do this for every new session on ITER GPC.
+
+
+    \item {Create configuration file}
+
+          \texttt{cxrs} behaviour controlled by configuration file which is necessary to run the code.
+
+          To create default configuration file, run
+
+          \begin{minted}{bash}
+            python -m cxrs create-config
+          \end{minted}
+
+          This will create a configuration file with a name \texttt{config.xml} in current directory.
+
+
+    \item {Populate local atomic database}
+
+          \texttt{cxrs} uses a local atomic database. To create one, run
+
+          \begin{minted}{bash}
+            python -m cxrs populate
+          \end{minted}
+
+          Atomic data will be copied to the \texttt{\$HOME/.cherab} directory.
+
+\end{enumerate}
+
+\subsection{Usage}
+
+\subsubsection{Performing a simulation}
+
+Main part of \texttt{cxrs} is simulation routine, to use it run
+
+\begin{minted}{bash}
+    python -m cxrs simulate -s <shot> -r <run> -t <time> -c <config>
+\end{minted}
+
+It will perform a simulation and will store result in newly created folder \texttt{cxrs\_output}.
+
+\texttt{time} can be omitted. In that case code will use a time slice in the middle of available time range for a simulation.
+
+For more information use help:
+\begin{minted}{bash}
+    python -m cxrs simulate --help
+\end{minted}
+
+\subsubsection{Print plasma profiles}
+
+\texttt{cxrs info} subprogram can be used to inspect different distributions of plasma and DNB parameters. To use it, run
+
+\begin{minted}{bash}
+    python -m cxrs info -s <shot> -r <run>
+\end{minted}
+
+Results will be stored in \texttt{cxrs\_output} folder.
+
+\emph{Note:} 1D profiles present values at the DNB axis.
+
+\subsubsection{Print plasma composition}
+
+You can quickly look at plasma composition for requested pulse by using
+
+\begin{minted}{bash}
+    python -m cxrs composition -s <shot> -r <run>
+\end{minted}
+
+
+Omit arguments to print composition for all pulses available by \texttt{scenario\_summary} program.
+
+\subsubsection{Configuration}
+
+\texttt{cxrs} accepts user's configurations as xml-file.
+
+To change option's value, change value attribute in double quotes corresponding to the option.
+
+For more information on the meaning of certain parameter, look at its description.
+
+\emph{Note:} type attribute is actually important. For string values use \texttt{str}, for floating-point values use \texttt{float} and \texttt{int} for integers.
+
+\emph{Warning:} Do not change tags, like \texttt{<user\_options>} or others, this will stop the program from .
+
+\subsubsection{Emission parameters}
+
+Section \texttt{emission\_parameters} controls which emission types are used during a simulation. Each of them can be turned on or off separately.
+
+\subsubsection{Plasma, beam, fibre, optics, camera, scanner and spectrometer parameters}
+
+Each of those sections controls appropriate aspect of simulation. For information on each parameter look at its description in configuration file.
+
+\subsubsection{Emission lines}
+
+List of emission lines suited for observations is placed in \texttt{<emission\_parameters>} section:
+
+\begin{minted}{xml}
+<emission_lines description="CXRS elements to observe.">
+    <HI>
+        <name
+            description="Name of the element."
+            unit="n.a."
+            type="str"
+            value="hydrogen"/>
+        <charge
+            description="Charge of the ion."
+            unit="n.a."
+            type="int"
+            value="0"/>
+        <transition_levels
+            description="Transition levels [upper, lower]."
+            unit="n.a."
+            type="int"
+            value="[3, 2]"/>
+    </HI>
+    ... more lines omitted
+</emission_lines>
+\end{minted}
+
+
+You can change and add new entries in this section following given template and added emission lines will be simulated if atomic data exists for them.
+
+Note: isotopes have to stated as separate structure. For example, line of helium-4 can be added as
+
+\begin{minted}{xml}
+<He4II>
+    <name
+        description="Name of the element."
+        unit="n.a."
+        type="str"
+        value="helium4"/>
+    <charge
+        description="Charge of the ion."
+        unit="n.a."
+        type="int"
+        value="1"/>
+    <transition_levels
+        description="Transition levels [upper, lower]."
+        unit="n.a."
+        type="int"
+        value="[4, 3]"/>
+</He4II>
+\end{minted}
+
+
+\subsubsection{DNB}
+
+DNB section of the configuration file contains parameters for Diagnostic Neutral Beam. Structure of this section replicates structure of nbi IDS.
+
+\subsubsection{Wavelength ranges and geometry}
+
+These two sections contain all information for CXRS diagnostics.
 
 \end{document}
