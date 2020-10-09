@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,titlepage,english,final]{article}
+\documentclass[a4paper,12pt,titlepage,english,draft]{article}
 
 \usepackage{geometry}
 \geometry{left=0.75in}
@@ -51,6 +51,8 @@
 
 \usepackage{csquotes}
 
+\usepackage[toc,page]{appendix}
+
 \usepackage{url}
 \usepackage{hyperref}
 \hypersetup{unicode=true,pdftitle={Title},pdfauthor={Author},colorlinks=true}
@@ -63,42 +65,42 @@
 \begin{document}
 
 \maketitle
-\tableofcontents
+\tableofcontents%
 
 \section{Purpose}%
 \label{sec:purpose}
-
+\subfile{sections/purpose}
 
 \section{Scope}%
 \label{sec:scope}
-This document is applicable to the 55.EC CXRS Edge diagnostic. The CXRS Edge system is an optical diagnostic that collects the light emitted by the plasma upon interaction with the Diagnostic Neutral Beam (DNB) and analyses this light to extract the ion temperature, plasma rotation velocities and impurity content of the plasma. An overview of the CXRS Edge system is given in the Design Description document (DDD)~\cite{ddd_cxrs_edge}.
-
+\subfile{sections/scope}
 
 \section{Definitions}%
 \label{sec:definitions}
-
-For a complete list of ITER abbreviations see~\cite{iter_abbr}. Below abbreviations used in this document are given.
-
-\begin{table}[ht]
-    \begin{tabular}{l l}
-        CXRS & Charge eXchange Recombination Spectroscopy \\
-        DNB  & Diagnostic Neutral Beam                    \\
-    \end{tabular}
-\end{table}
+\subfile{sections/definitions}
 
 \section{Introduction}%
 \label{sec:introduction}
 \subfile{sections/introduction}
 
-\section{For Users}%
-\label{sec:users}
-\subfile{sections/users}
+\section{Simulation of CXRS Specrta}%
+\label{sec:simulation}
+\subfile{sections/simulation}
 
-
-\section{For Developers}%
-\label{sec:developers}
-\subfile{sections/developers}
+\section{Conclusion}%
+\label{sec:conclusion}
+\subfile{sections/conclusion}
 
 \printbibliography%
+
+\begin{appendices}
+    \section{For Users}%
+    \label{app:users}
+    \subfile{sections/users}
+
+    \section{For Developers}%
+    \label{app:developers}
+    \subfile{sections/developers}
+\end{appendices}
 
 \end{document}
