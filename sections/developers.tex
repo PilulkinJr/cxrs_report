@@ -2,32 +2,144 @@
 
 \begin{document}
 
-\subsection{Project Structure}
-\subsection{Reading data from IMAS}
-\subsubsection{\texttt{equilibrium} IDS}
-\subsubsection{\texttt{core\_profiles} IDS}
-\subsubsection{\texttt{edge\_profiles} IDS}
-\subsubsection{\texttt{charge\_exchange} IDS}
-\subsubsection{\texttt{nbi} IDS}
-\subsubsection{Supplementary Functions}
-\subsection{Setting the Wall}
-\subsection{Observers}
-\subsubsection{Base Class}
-\subsubsection{Sightlines}
+\subsection{Project Structure}%
+\label{sec:project_structure}
+
+Most of the functions implemented in this project contain docstrings written in \enquote{classic} Python style using \textbf{reStructuredText} syntax. Each doscstring contains a short description of a function, list of arguments and theis types and list of exceptions which can be rised during execution of the function.
+
+\subsection{Reading data from IMAS}%
+\label{sec:reading_from_imas}
+
+Module responsible for reading data from IMAS and creating appropriate plasma and DNB models is stored in \texttt{cxrs\//imas} directory.
+
+\subsubsection{Supplementary Functions}%
+\label{sec:imas_supp}
+File \texttt{ids.py} contains only one function \texttt{ids\_get} which is used to check and load requested IDS. For example
+\begin{minted}{python}
+    charge_exchange_ids = ids_get(
+        "charge_exchange",
+        134000,
+        30,
+        user="public",
+        database="iter",
+        version="3",
+        occurrence=0
+    )
+\end{minted}
+will return an IDS object associated with charge exchange diagnostic for particular pulse from ITER public database. Each IDS can store several \texttt{occurences} (refer to the description of an IDS). For example in \texttt{charge\_exchange} IDS occurrences used to store data related to different diagnostics.
+
+File \texttt{find\_nearest.py} contains only one function \texttt{find\_nearest}. It is used for locating nearest time slice to the time requested by user.
+
+\subsubsection{\texttt{equilibrium} IDS}%
+\label{sec:equilibrium_ids}
+
+File \texttt{equilibrium.py} contains \texttt{EquilibriumIDS} class which is used to read data from \\ \texttt{equilibrium} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/equilibrium.html?highlight=efit#cherab.tools.equilibrium.efit.EFITEquilibrium}{\texttt{EFITEquilibrium}} object via \texttt{time} method. It is later used to build core plasma model.
+
+\begin{minted}{python}
+    equilibrium_ids = EquilibriumIDS(134000, 30) 
+    equilibrium = equilibrium_ids.time(-1)
+\end{minted}
+here \texttt{-1} for time is used to aquire a time slice in the middle of time range for this particular pulse.
+
+\subsubsection{\texttt{core\_profiles} IDS}%
+\label{sec:core_profiles_ids}
+
+File \texttt{core\_profiles.py} contains \texttt{CoreProfilesIDS} class which is used to read data from \texttt{core\_profiles} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/core_plasma_classes.html?highlight=plasma#cherab.core.Plasma}{\texttt{Plasma}} object via \texttt{create\_plasma} method. It is poses as core plasma model.
+
+\begin{minted}{python}
+    core_profiles_ids = CoreProfilesIDS(134000, 30)
+    core_plasma = core_profiles_ids.create_plasma(equilibrium)
+\end{minted}
+\emph{Note} that \texttt{create\_plasma} method does not require time value since it uses one that stored in \texttt{equilibrium}.
+
+One required argument of \texttt{create\_plasma} is \texttt{equilibrium}. It provides $\Psi_\text{norm}$ distribution which is used to map density, temperature and bulk velocity distributions of plasma. Functions \texttt{distribution\_density}, \texttt{distribution\_temperature} and \texttt{distribution\_velocity} are doing exactly that. \emph{Note:} \texttt{distribution\_temperature} tries to use average ion temrerature or electron temperature if species' own temperature profile is absent in the IDS.
+
+Function \texttt{detect\_species} is used to recognise ion and neutral species from label given in IDS. Since there was no convention on the labeling at the time this appeared to be a huge problem. \texttt{detect\_species} uses regulat expressions to math species label along some other tricks. It returns CHERAB's \href{https://cherab.github.io/documentation/atomic/elements_and_isotopes.html?highlight=element#cherab.core.atomic.elements.Element}{\texttt{Element}} object and species charge as a number (0 for neutrals).
+
+\subsubsection{\texttt{edge\_profiles} IDS}%
+\label{sec:edge_profiles_ids}
+
+File \texttt{edge\_profiles.py} contains \texttt{EdgeProfilesIDS} class which is used to read data from \texttt{edge\_profiles} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/core_plasma_classes.html?highlight=plasma#cherab.core.Plasma}{\texttt{Plasma}} object via \texttt{create\_plasma} method. It is poses as edge plasma model.
+
+\texttt{edge\_profiles} IDS requires its own class because values there set to a mesh instead of 1D profile as in \texttt{core\_profiles} IDS. Second reason is that
+
+\begin{minted}{python}
+    edge_profiles_ids = EdgeProfilesIDS(134000, 30)
+    edge_plasma = edge_profiles_ids.create_plasma(time=-1)
+    # or
+    edge_plasma = edge_profiles_ids.create_plasma(equilibrium=equilibrium)
+\end{minted}
+\emph{Note} that \texttt{create\_plasma} has two optional arguments: \texttt{time} and \texttt{equilibrium}, but at least one of them is required. \texttt{time=-1} is for the same reason as in~\cref{sec:equilibrium_ids}.
+
+\subsubsection{\texttt{charge\_exchange} IDS}%
+\label{sec:charge_exchange_ids}
+
+File \texttt{charge\_exchange.py} contains \texttt{ChargeExchangeIDS} class which is used to read data from \texttt{charge\_exchange} IDS and create different types of observers.
+
+\begin{minted}{python}
+    charge_exchange_ids = ChargeExchangeIDS(134000, 30)
+    sightlines = SightlineGroup(ids=charge_exchange_ids)
+\end{minted}
+
+For information on \texttt{SightlineGroup}, see~\cref{sec:sightlines}
+
+\subsubsection{\texttt{nbi} IDS}%
+\label{sec:nbi_ids}
+
+File \texttt{nbi.py} contains \texttt{NBIIDS} class which is used to read data from \texttt{nbi} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/particle_beams.html?highlight=beam#cherab.core.Beam}{\texttt{Beam}} object via \texttt{create\_beam} method. It is poses as DNB model.
+
+\begin{minted}{python}
+    nbi_ids = NBIIDS(134000, 30)
+    beam = nbi_ids.create_beam(
+        time=-1,
+        plasma=core_plasma,
+        atomic_data=adas,
+        attenuation_instructions=attenuation_instructions,
+        emission_instructions=emission_instructions
+    )
+\end{minted}
+
+here \texttt{time=-1} for the same reasona as in~\cref{sec:equilibrium_ids}. For more information on \texttt{adas} see~\cref{sec:atomic}, on \texttt{attenuation\_instructions} and \texttt{emission\_instructions} see~\cref{sec:emission}.
+
+At the time \texttt{Beam} supports model with only one beamlet and \texttt{create\_beam} is designed with this in mind.
+
+\subsection{Setting the Wall}%
+\label{sec:wall}
+
+\texttt{cxrs/machine/pfc\_mesh.py}
+
+\subsection{Observers}%
+\label{sec:observers}
+
+\texttt{cxrs/observers}
+
+\subsubsection{Base Class}%
+\label{sec:observers_base}
+
+\subsubsection{Sightlines}%
+\label{sec:sightlines}
+
 \subsubsection{Optics}
 \subsubsection{Fibres}
-\paragraph{Separate Fibres}
-\paragraph{Fibre Bundle}
 \subsubsection{Camera}
 \subsubsection{Others}
-\paragraph{Scanner}
-\paragraph{Total Radiance}
-\paragraph{Spectrometer}
-\subsection{Populating CHERAB Atomic Database}
-\subsection{Utility Functions}
-\subsubsection{Parsing XML Configuration File}
-\subsubsection{Setting Emission Parameters}
-\subsubsection{Math Functions}
-\subsubsection{Others}
+
+\subsection{Populating CHERAB's Atomic Database}%
+\label{sec:atomic}
+
+\subsection{Utility Functions}%
+\label{sec:utility}
+
+\subsubsection{Parsing XML Configuration File}%
+\label{sec:xml}
+
+\subsubsection{Setting Emission Parameters}%
+\label{sec:emission}
+
+\subsubsection{Math Functions}%
+\label{sec:math}
+
+\subsubsection{Others}%
+\label{sec:other}
 
 \end{document}

@@ -11,13 +11,13 @@ Clone this repository then go to its root folder:
     cd cxrs
 \end{minted}
 
-At first you have to load all modules needed:
+First of all you have to load all required modules:
 
 \begin{minted}{bash}
     source env.sh
 \end{minted}
 
-This will purge all loaded modules and will load modules necessary to install and use \texttt{cxrs}.
+This will purge all loaded modules and load ones that necessary to install and use \texttt{cxrs}.
 
 To install \texttt{cxrs} on your computer run
 
@@ -33,11 +33,7 @@ while in the the \texttt{cxrs} root directory.
     export PATH="$PATH:/home/ITER/<username>/.local/bin"
 \end{minted}
 
-where \texttt{<username>} is your username at ITER GPC. You can look at it by executing next command via command line:
-
-\begin{minted}{bash}
-    echo $USER
-\end{minted}
+where \texttt{<username>} is your username at ITER GPC. You can look at it by executing next command via command line: \texttt{echo \$USER}.
 
 \subsection{Preparations for the first run}
 
@@ -91,17 +87,22 @@ where \texttt{<username>} is your username at ITER GPC. You can look at it by ex
 
 \subsubsection{Performing a simulation}
 
-Main part of \texttt{cxrs} is simulation routine, to use it run
+Main part of \texttt{cxrs} is simulation routine, to use it for pulse with \texttt{<shot>} shot number and \texttt{<run>} run number for time slice \texttt{<time>} use:
 
 \begin{minted}{bash}
     python -m cxrs simulate -s <shot> -r <run> -t <time> -c <config>
 \end{minted}
 
+where \texttt{<config>} is a path to configuration file.
+
 It will perform a simulation and will store result in newly created folder \texttt{cxrs\_output}.
 
-\texttt{time} can be omitted. In that case code will use a time slice in the middle of available time range for a simulation.
+\emph{Note:} \texttt{time} can be omitted. In that case time slice in the middle of the time range will be used. This is particularly useful for time slices with a lot of digits after after decimal separator. For example :
+\begin{minted}{bash}
+    python -m cxrs simulate -s 134000 -r 30 -c config.xml
+\end{minted}
 
-For more information use help:
+For additional information use help:
 \begin{minted}{bash}
     python -m cxrs simulate --help
 \end{minted}
@@ -114,9 +115,8 @@ For more information use help:
     python -m cxrs info -s <shot> -r <run>
 \end{minted}
 
-Results will be stored in \texttt{cxrs\_output} folder.
-
-\emph{Note:} 1D profiles present values at the DNB axis.
+It will produce variety of plots and tables and place it in \texttt{cxrs\_output} folder.
+\emph{Note:} 1D profiles represent values at the DNB axis.
 
 \subsubsection{Print plasma composition}
 
@@ -125,7 +125,6 @@ You can quickly look at plasma composition for requested pulse by using
 \begin{minted}{bash}
     python -m cxrs composition -s <shot> -r <run>
 \end{minted}
-
 
 Omit arguments to print composition for all pulses available by \texttt{scenario\_summary} program.
 
@@ -139,7 +138,7 @@ For more information on the meaning of certain parameter, look at its descriptio
 
 \emph{Note:} type attribute is actually important. For string values use \texttt{str}, for floating-point values use \texttt{float} and \texttt{int} for integers.
 
-\emph{Warning:} Do not change tags, like \texttt{<user\_options>} or others, this will stop the program from .
+\emph{Warning:} Do not change tags, like \texttt{<user\_options>} or others, this will stop the program from working.
 
 \subsubsection{Emission parameters}
 
@@ -177,30 +176,7 @@ List of emission lines suited for observations is placed in \texttt{<emission\_p
 \end{minted}
 
 
-You can change and add new entries in this section following given template and added emission lines will be simulated if atomic data exists for them.
-
-Note: isotopes have to stated as separate structure. For example, line of helium-4 can be added as
-
-\begin{minted}{xml}
-<He4II>
-    <name
-        description="Name of the element."
-        unit="n.a."
-        type="str"
-        value="helium4"/>
-    <charge
-        description="Charge of the ion."
-        unit="n.a."
-        type="int"
-        value="1"/>
-    <transition_levels
-        description="Transition levels [upper, lower]."
-        unit="n.a."
-        type="int"
-        value="[4, 3]"/>
-</He4II>
-\end{minted}
-
+You can change and add new entries in this section following given template. Added emission lines will be simulated if atomic data exists for them.
 
 \subsubsection{DNB}
 
