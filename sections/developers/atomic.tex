@@ -1,0 +1,35 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+\texttt{populate/create}
+
+\begin{minted}{python}
+    populate_more(
+        download=True,
+        repository_path=None,
+        adas_path="/work/projects/adas/adas/"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{download}] -- attempt to download the ADAS files if missing;
+    \item[\texttt{repository\_path}] -- alternate path for the OpenADAS repository;
+    \item[\texttt{adas\_path}] -- alternate path in which to search for ADAS files;
+\end{itemize}
+
+\texttt{populate/openadas}
+
+\begin{minted}{python}
+    adas = OpenADAS(
+        data_path=None,
+        permit_extrapolation=False,
+        missing_rates_return_null=False
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{data\_path}] -- path to atomic data repository;
+    \item[\texttt{permit\_extrapolation}] -- if \mintinline{python}{True} informs interpolation objects to allow extrapolation beyond the limits of the tabulated data;
+    \item[\texttt{missing\_rates\_return\_null}] -- if \mintinline{python}{True}, allows \texttt{Null} rate objects to be returned when the requested atomic data is missing.
+\end{itemize}
+\end{document}

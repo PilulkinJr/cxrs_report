@@ -1,0 +1,145 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+\subsubsection{Getting Information on Plasma Parameters}%
+\label{sec:info}
+
+\dirtree{%
+    .1 info/.
+    .2 \_\_init\_\_.py.
+    .2 beam.py.
+    .2 equilibrium.py.
+    .2 passive.py.
+    .2 plasma.py.
+    .2 profiles.py.
+}
+
+beam.py
+
+\begin{minted}{python}
+    beam_info(
+        plasma=,
+        id_dict=,
+        plot_dict=,
+        dirname=,
+        config=,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{plasma}]
+    \item[\texttt{id\_dict}]
+    \item[\texttt{plot\_dict}]
+    \item[\texttt{dirname}]
+    \item[\texttt{config}]
+\end{itemize}
+
+equilibrium.py
+
+\begin{minted}{python}
+    equilibrium_info(
+        id_dict=,
+        plot_dict=,
+        filename=,
+        dirname=,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{id\_dict}]
+    \item[\texttt{plot\_dict}]
+    \item[\texttt{filename}]
+    \item[\texttt{dirname}]
+\end{itemize}
+
+passive.py
+
+\begin{minted}{python}
+passive_info(
+    plasma=,
+    beam=,
+    id_dict=,
+    plot_dict=,
+    dirname=,
+)
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{plasma}]
+    \item[\texttt{beam}]
+    \item[\texttt{id\_dict}]
+    \item[\texttt{plot\_dict}]
+    \item[\texttt{dirname}]
+\end{itemize}
+
+profiles.py
+
+\begin{minted}{python}
+profiles_info(
+    core_plasma=,
+    edge_plasma=,
+    beam=,
+    id_dict=,
+    plot_dict=,
+    dirname=,
+)
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{core\_plasma}]
+    \item[\texttt{edge\_plasma}]
+    \item[\texttt{beam}]
+    \item[\texttt{id\_dict}]
+    \item[\texttt{plot\_dict}]
+    \item[\texttt{dirname}]
+\end{itemize}
+
+\subsubsection{Parsing XML Configuration File}%
+\label{sec:xml}
+
+\mint{python}{srt2bool(string="on")}
+\mint{python}{bool2str(arg=True)}
+\mint{python}{read_xml_entry(tree_element)}
+\mint{python}{parse_user_options(section, config)}
+\mint{python}{parse_emission_lines(config)}
+\mint{python}{parse_diagnostic_geometry(config)}
+\mint{python}{parse_dnb_parameters(config)}
+\mint{python}{parse_wavelength_ranges(config)}
+
+\subsubsection{Setting Emission Parameters}%
+\label{sec:emission}
+
+\begin{minted}{python}
+    plasma_emission_parameters = plasma_emission(
+        plasma=,
+        lines=,
+        bremsstrahlung=False,
+        recombination=False,
+        excitation=False,
+        passive=False,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{plasma}]
+    \item[\texttt{lines}]
+    \item[\texttt{bremsstrahlung}]
+    \item[\texttt{recombination}]
+    \item[\texttt{excitation}]
+    \item[\texttt{passive}]
+\end{itemize}
+
+\subsubsection{Math Functions}%
+\label{sec:math}
+
+\subsubsection{Fitting Routine}%
+\label{sec:fitting}
+
+\subsubsection{Others}%
+\label{sec:other}
+
+utility/annotation
+utility/data
+utility/timer
+utility/fit
+\end{document}

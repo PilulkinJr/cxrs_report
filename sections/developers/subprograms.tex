@@ -1,0 +1,195 @@
+\documentclass[../../main]{subfiles}
+
+\begin{document}
+
+\texttt{cxrs} uses CLI with git-like structure with subprograms. They are defined in \texttt{cxrs/subprograms} module.
+
+Script controlling CLI is \texttt{cxrs/\_\_main\_\_.py}. It defines \texttt{CLI} class and all subprograms as its methods. Each method calls \texttt{main} function from respective module and passes arguments from command line to it.
+
+\subsubsection{\texttt{composition}}
+
+\paragraph{\texttt{main}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs composition -s 134000 -r 30 -f 134000_30_composition.txt}\\
+
+\begin{minted}{python}
+    main(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+        filename="134000_30_composition.txt"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number:
+    \item[\texttt{filename}] path to output file. If not specified, output will be printed to stdout.
+\end{itemize}
+
+\emph{Note:} if \texttt{shot} and \texttt{run} are not specified program will print compositions for all available pulses.
+
+\paragraph{\texttt{composition\_core}} function prints core plasma composition for requested pulse.
+
+\begin{minted}{python}
+    composition_core(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number.
+\end{itemize}
+
+\paragraph{\texttt{composition\_edge}} function prints core plasma composition for requested pulse.
+
+\begin{minted}{python}
+    composition_edge(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number.
+\end{itemize}
+
+\paragraph{\texttt{scenario\_summary}} function returns an output of \mintinline{bash}{scenario_summary -c shot,run} as a string.
+
+\begin{minted}{python}
+    scenario_summary()
+\end{minted}
+
+\subsubsection{\texttt{info}}
+
+\paragraph{\texttt{main}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs info -s 134000 -r 30 -c config.xml}.
+It reads IMAS data for requested pulse, builds appropriate models: EFITEquilibrium, Plasma, Beam and produces useful information in form of plots and text tables. It allows to quickly look at models before performing computational-heavy observation tasks.
+Functions for creating plots and tables as placed in \texttt{cxrs/utility/info} folder in respective files.
+
+\begin{minted}{python}
+    main(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+        filename="config.xml"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number:
+    \item[\texttt{filename}] path to configuration file.
+\end{itemize}
+
+\subsubsection{\texttt{local\_copy}}
+\textbf{DEPRECATED}
+
+\subsubsection{\texttt{populate}}
+
+\paragraph{\texttt{main}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs populate}\\
+It calls \texttt{populate\_more} function from \texttt{cxrs/populate/create.py} with single argument \\ \texttt{adas\_path="/work/projects/adas/adas/"}. This populates local CHERAB's atomic data repository at \texttt{/home/\$USER/.cherab} folder with data defined in the body of \texttt{populate\_more} function and makes \texttt{cxrs} use ADAS rate files stored in \texttt{/work/projects/adas/adas}.
+
+\subsubsection{\texttt{read\_ids}}
+
+Contain functions that are used to read necessary data from charge\_exchange and nbi IDSs. Designed for debug purposes.
+
+\paragraph{\texttt{cxs}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs read_ids -s 134000 -r 30 --cxs -o 0}\\
+Prints all information related to diagnostic geometry stored in \texttt{charge\_exchange} IDS for requested pulse.
+
+\begin{minted}{python}
+    cxs(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+        occurrence=0
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number;
+    \item[\texttt{occurrence}] IDS occurrence ID.
+\end{itemize}
+
+\paragraph{\texttt{nbi}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs read_ids -s 134000 -r 30 --nbi -o 0}\\
+Prints all information related to DNB geometry and parameters stored in \texttt{nbi} IDS for requested pulse.
+
+\begin{minted}{python}
+    nbi(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+        occurrence=0
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number;
+    \item[\texttt{occurrence}] IDS occurrence ID.
+\end{itemize}
+
+\subsubsection{\texttt{search}}
+
+Search for pulses that contain requested element by its symbol.
+
+\paragraph{\texttt{main}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs search C}\\
+Prints list of pulses with their shot and run numbers. Uses \mintinline{bash}{scenario_summary} program.
+
+\begin{minted}{python}
+    main(
+        symbol="C",
+        verbose=False,
+        clean=False,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{symbol}] symbol of the requested element;
+    \item[\texttt{verbose}] print additional text;
+    \item[\texttt{clean}] delete temporary file produced by \mintinline{bash}{scenario_summary} program.
+\end{itemize}
+
+\subsubsection{\texttt{simulate}}
+\subsubsection{\texttt{write\_ids}}
+
+\end{document}

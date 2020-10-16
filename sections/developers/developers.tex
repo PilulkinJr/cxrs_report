@@ -1,0 +1,39 @@
+\documentclass[../../main]{subfiles}
+
+\begin{document}
+
+This section is aimed to help future developers in their work on \texttt{cxrs}. Most of the functions implemented in this project contain docstrings written in \enquote{classic} Python style using \textbf{reStructuredText} syntax. Each docstring contains a short description of a function, list of arguments and their types and list of exceptions which can be risen during execution of the function, but description for some of the arguments can be missing.
+
+Also this section tries to be a proper documentation for a software project. But, really, it is more of a reasoning for why \emph{this thing is done like that and not like this}.
+
+\subsection{Project Structure}%
+\label{sec:project_structure}
+
+\texttt{cxrs} project is divided in several modules, each in its respective folder:
+\input{project_tree}
+
+\subsection{\texttt{subprograms} module -- Command Line Interface}%
+\label{sec:subprograms}%
+\subfile{subprograms}%
+
+\subsection{\texttt{imas} module -- Interaction with IMAS database}%
+\label{sec:reading_from_imas}%
+\subfile{imas}%
+
+\subsection{\texttt{machine} module -- Setting the Wall}%
+\label{sec:wall}%
+\subfile{wall}%
+
+\subsection{\texttt{observers} module}%
+\label{sec:observers}%
+\subfile{observers}%
+
+\subsection{\texttt{populate} module}%
+\label{sec:atomic}%
+\subfile{atomic}%
+
+\subsection{\texttt{utility} module}%
+\label{sec:utility}%
+\subfile{utility}%
+
+\end{document}

@@ -1,0 +1,446 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+Module responsible for reading data from IMAS and creating appropriate plasma and DNB models is stored in \texttt{cxrs\//imas} directory.
+
+\subsubsection{Supplementary Functions}%
+\label{sec:imas_supp}
+
+\paragraph{\texttt{ids\_get}}%
+
+File \texttt{ids.py} contains only one function \texttt{ids\_get} which is used to check and load requested IDS. For example
+
+\begin{minted}{python}
+    charge_exchange_ids = ids_get(
+        name="charge_exchange",
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+        occurrence=0
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{name}] is a name of requested IDS,
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+    \item[\texttt{occurrence}] is an IDS occurrence number. Each IDS can store several \texttt{occurrences} (refer to the description of an IDS). For example in \texttt{charge\_exchange} IDS occurrences used to store data related to different diagnostics.
+\end{itemize}
+
+\paragraph{\texttt{find\_nearest}}%
+
+File \texttt{find\_nearest.py} contains only one function \texttt{find\_nearest}. It is used for locating an index of the nearest time slice to the time requested by user.
+
+Example:
+\begin{minted}{python}
+    idx = find_nearest(
+        array=time_slices,
+        value=260,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{array}] is an input array,
+    \item[\texttt{value}] is a value to search for.
+\end{itemize}
+
+\subsubsection{\texttt{equilibrium} IDS}%
+\label{sec:equilibrium_ids}
+
+File \texttt{equilibrium.py} contains \texttt{EquilibriumIDS} class which is used to read data from \\ \texttt{equilibrium} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/equilibrium.html?highlight=efit#cherab.tools.equilibrium.efit.EFITEquilibrium}{\texttt{EFITEquilibrium}} object via \texttt{time} method. It is later used to build core plasma model.
+
+Load an \texttt{equilibrium} IDS:
+\begin{minted}{python}
+    equilibrium_ids = EquilibriumIDS(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+\end{itemize}
+
+Create an \texttt{EFITEquilibrium} object:
+\begin{minted}{python}
+    equilibrium = equilibrium.time(time=-1)
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{time}] is a requested time. Here \texttt{-1} for time is used to acquire a time slice in the middle of time range.
+\end{itemize}
+
+Other methods:
+\begin{itemize}[align=left]
+    \item[\texttt{ids()}] returns the \texttt{equilibrium} IDS object;
+    \item[\texttt{psi\_1d()}] returns one-dimensional $\Psi$ profile stored in \texttt{ids.time\_slice[i].profiles\_1d.psi}. It is implemented in case if \texttt{core\_profiles}~(\cref{sec:core_profiles_ids}) IDS does not contain its own profile.
+\end{itemize}
+
+\subsubsection{\texttt{core\_profiles} IDS}%
+\label{sec:core_profiles_ids}
+
+File \texttt{core\_profiles.py} contains \texttt{CoreProfilesIDS} class which is used to read data from \texttt{core\_profiles} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/core_plasma_classes.html?highlight=plasma#cherab.core.Plasma}{\texttt{Plasma}} object via \texttt{create\_plasma} method. It is poses as core plasma model.
+
+Load a \texttt{core\_profiles} IDS:
+\begin{minted}{python}
+    core_profiles_ids = CoreProfilesIDS(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+\end{itemize}
+
+Create a \texttt{Plasma} object:
+\begin{minted}{python}
+    core_plasma = core_profiles_ids.create_plasma(
+        equilibrium=equilibrium,
+        psi_1d=equilibrium.psi_1d(),
+        integration_step=0.001,
+        integration_samples=5,
+        parent=world,
+        transform=None,
+        name="Core Plasma"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids});
+    \item[\texttt{psi\_1d}] is one-dimensional $\Psi$ profile~(\cref{sec:equilibrium_ids}). It is used if one stored in \texttt{core\_profiles} IDS is missing;
+    \item[\texttt{integration\_step}] is step of volumetric integration in meters;
+    \item[\texttt{integration\_samples}] is a number of integration samples;
+    \item[\texttt{parent}] is a parent node;
+    \item[\texttt{transform}] is transformation matrix;
+    \item[\texttt{name}] is a name of this plasma.
+\end{itemize}
+\emph{Note: } for more information on \texttt{integration\_step} and \texttt{integration\_samples} refer to CHERAB's documentation on \href{https://cherab.github.io/documentation/plasmas/core_plasma_classes.html?highlight=plasma#cherab.core.Plasma}{\texttt{Plasma}}.
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/core/raysect_core_scenegraph.html?highlight=node#raysect.core.scenegraph.node.Node}{\texttt{Node}}.
+
+\emph{Note} that \texttt{create\_plasma} method does not require time value since it uses one that stored in \texttt{equilibrium}.
+
+One required argument of \texttt{create\_plasma} is \texttt{equilibrium}. It provides $\Psi_\text{norm}$ distribution which is used to map density, temperature and bulk velocity distributions of plasma. Functions \texttt{distribution\_density}, \texttt{distribution\_temperature} and \texttt{distribution\_velocity} are doing exactly that. \emph{Note:} \texttt{distribution\_temperature} tries to use average ion temperature or electron temperature if species' own temperature profile is absent in the IDS.
+
+\paragraph{\texttt{detect\_species}}%
+\label{par:detect_species}
+
+Function \texttt{detect\_species} is used to recognize ion and neutral species from label given in IDS. Since there was no convention on the labeling at the time this appeared to be a huge problem. \texttt{detect\_species} uses regular expressions to math species label along some other tricks. It returns CHERAB's \href{https://cherab.github.io/documentation/atomic/elements_and_isotopes.html?highlight=element#cherab.core.atomic.elements.Element}{\texttt{Element}} object and species charge as a number (0 for neutrals).
+
+\begin{minted}{python}
+    species, charge = detect_species(
+        structure=core_profiles_ids.ids.profiles_1d[0].ion[0],
+        ion=True
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{ion}] set to \mintinline{python}{True} for ion species or to \mintinline{python}{False} for neutrals. It changes regular expression pattern and sets \texttt{charge} to 0 for neutrals.
+\end{itemize}
+
+\paragraph{\texttt{distribution\_density}}%
+
+\begin{minted}{python}
+    n_d = distribution_density(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+\end{itemize}
+
+This function checks if density profile stored in the IDS is correct: not empty, greater than zero, not equal to zero and not equal to 1.0. If it is not correct than message is produced and this species is not included in the plasma model.
+
+\paragraph{\texttt{distribution\_temperature}}%
+
+\begin{minted}{python}
+    t_d = distribution_temperature(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium,
+        t_average=core_profiles_ids.ids.profiles_1d[i].t_i_average,
+        t_electrons=core_profiles_ids.ids.profiles_1d[i].electrons.temperature
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+    \item[\texttt{t\_average}] is an average ion temperature profile stored is the IDS. It is used in case if ion temperature profile for requested species is absent.
+    \item[\texttt{t\_electrons}] is an electron temperature profile. It is used in case if ion temperature profile for requested species is absent.
+\end{itemize}
+
+\paragraph{\texttt{distribution\_velocity}}%
+
+\begin{minted}{python}
+    v_d = distribution_velocity(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+\end{itemize}
+
+\subsubsection{\texttt{edge\_profiles} IDS}%
+\label{sec:edge_profiles_ids}
+
+File \texttt{edge\_profiles.py} contains \texttt{EdgeProfilesIDS} class which is used to read data from \texttt{edge\_profiles} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/core_plasma_classes.html?highlight=plasma#cherab.core.Plasma}{\texttt{Plasma}} object via \texttt{create\_plasma} method. It is poses as edge plasma model.
+
+Load a \texttt{edge\_profiles} IDS:
+\begin{minted}{python}
+    edge_profiles_ids = EdgeProfilesIDS(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+\end{itemize}
+
+Create a \texttt{Plasma} object:
+\begin{minted}{python}
+    edge_plasma = edge_profiles_ids.create_plasma(
+        time=0.0,
+        equilibrium=equilibrium,
+        integration_step=0.001,
+        integration_samples=5,
+        parent=world,
+        transform=None,
+        name="Edge Plasma"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{time}] is a requested time;
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids});
+    \item[\texttt{integration\_step}] is step of volumetric integration in meters;
+    \item[\texttt{integration\_samples}] is a number of integration samples;
+    \item[\texttt{parent}] is a parent node;
+    \item[\texttt{transform}] is transformation matrix;
+    \item[\texttt{name}] is a name of this plasma.
+\end{itemize}
+\emph{Note: } for more information on \texttt{integration\_step} and \texttt{integration\_samples} refer to CHERAB's documentation on \href{https://cherab.github.io/documentation/plasmas/edge_plasma_classes.html?highlight=plasma#cherab.edge.Plasma}{\texttt{Plasma}}.
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/edge/raysect_edge_scenegraph.html?highlight=node#raysect.edge.scenegraph.node.Node}{\texttt{Node}}.
+
+\paragraph{\texttt{distribution\_density}}%
+
+\begin{minted}{python}
+    n_d = distribution_density(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium,
+        interpolator=interp_options[interp],
+        interpolation_data=interp_data[interp],
+        mesh_lookup=te_mesh_lookup
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+    \item[\texttt{interpolator}] -- select an interpolator based on where values are defined: faces or nodes.
+    \item[\texttt{interpolation\_data}] -- select a function to process data based on where values are defined: faces or nodes.
+    \item[\texttt{mesh\_lookup}] \emph{empty}
+\end{itemize}
+
+All \texttt{interpolator}, \texttt{interpolation\_data} and \texttt{mesh\_lookup} are defined in the body of \texttt{create\_plasma} method.
+
+This function checks if density profile stored in the IDS is correct: not empty, greater than zero, not equal to zero and not equal to 1.0. If it is not correct than message is produced and this species is not included in the plasma model.
+
+\paragraph{\texttt{distribution\_temperature}}%
+
+\begin{minted}{python}
+    t_d = distribution_temperature(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium,
+        interpolator=interp_options[interp],
+        interpolation_data=interp_data[interp],
+        mesh_lookup=te_mesh_lookup
+        t_average=core_profiles_ids.ids.profiles_1d[i].t_i_average,
+        t_electrons=core_profiles_ids.ids.profiles_1d[i].electrons.temperature
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+    \item[\texttt{interpolator}] -- select an interpolator based on where values are defined: faces or nodes.
+    \item[\texttt{interpolation\_data}] -- select a function to process data based on where values are defined: faces or nodes.
+    \item[\texttt{mesh\_lookup}] \emph{empty}
+    \item[\texttt{t\_average}] is an average ion temperature profile stored is the IDS. It is used in case if ion temperature profile for requested species is absent.
+    \item[\texttt{t\_electrons}] is an electron temperature profile. It is used in case if ion temperature profile for requested species is absent.
+\end{itemize}
+
+\paragraph{\texttt{distribution\_velocity}}%
+
+\begin{minted}{python}
+    v_d = distribution_velocity(
+        structure=core_profiles_ids.ids.profiles_1d[i].ion[j],
+        symbol="D",
+        charge=1,
+        psi_normalised=psi_normalised,
+        equilibrium=equilibrium,
+        interpolator=interp_options[interp],
+        interpolation_data=interp_data[interp],
+        mesh_lookup=te_mesh_lookup
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{structure}] is an IDS structure containing information on species (\texttt{ids.profiles\_1d[i].ion[j]} or \texttt{ids.profiles\_1d[i].neutral[j]}).
+    \item[\texttt{symbol}] is a species symbol. It is used for messages.
+    \item[\texttt{charge}] is a species charge. It is used for messages.
+    \item[\texttt{psi\_normalised}] is a $\Psi_\text{norm}$ profile. It is used to map density values.
+    \item[\texttt{equilibrium}] is an EFITEquilibrium object~(\cref{sec:equilibrium_ids}).
+    \item[\texttt{interpolator}] -- select an interpolator based on where values are defined: faces or nodes.
+    \item[\texttt{interpolation\_data}] -- select a function to process data based on where values are defined: faces or nodes.
+    \item[\texttt{mesh\_lookup}] \emph{empty}
+\end{itemize}
+
+\paragraph{\texttt{detect\_species}} is a copy of a function described in~\cref{par:detect_species}.
+
+\subsubsection{\texttt{charge\_exchange} IDS}%
+\label{sec:charge_exchange_ids}
+
+File \texttt{charge\_exchange.py} contains \texttt{ChargeExchangeIDS} class which is used to read data from \texttt{charge\_exchange} IDS and create different types of observers.
+
+Load an \texttt{charge\_exchange} IDS:
+\begin{minted}{python}
+    charge_exchange_ids = ChargeExchangeIDS(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+\end{itemize}
+
+\subsubsection{\texttt{nbi} IDS}%
+\label{sec:nbi_ids}
+
+File \texttt{nbi.py} contains \texttt{NBIIDS} class which is used to read data from \texttt{nbi} IDS and create CHERAB's \href{https://cherab.github.io/documentation/plasmas/particle_beams.html?highlight=beam#cherab.core.Beam}{\texttt{Beam}} object via \texttt{create\_beam} method. It is poses as DNB model.
+
+Load an \texttt{nbi} IDS:
+\begin{minted}{python}
+    nbi_ids = NBIIDS(
+        shot=134000,
+        run=30,
+        user="public",
+        database="iter",
+        version="3",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] is an IMAS database shot ID,
+    \item[\texttt{run}] is an IMAS data run ID,
+    \item[\texttt{user}] is an IMAS database user ID,
+    \item[\texttt{database}] is an IMAS database ID,
+    \item[\texttt{version}] is an IMAS major version number,
+\end{itemize}
+
+\begin{minted}{python}
+    beam = nbi_ids.create_beam(
+        time=0.0,
+        plasma=core_plasma,
+        atomic_data=adas,
+        attenuation_instructions=attenuation_instructions,
+        emission_instructions=emission_instructions,
+        length=4.0,
+        integration_step=0.001,
+        integration_samples=5,
+        parent=world
+        transform=None,
+        name="DNB"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{time}] is a requested time;
+    \item[\texttt{plasma}] is CHERAB's \texttt{Plasma} object;
+    \item[\texttt{atomic\_data}] is modified CHERAB's \texttt{OpenADAS} object;
+    \item[\texttt{attenuation\_instructions}] is a dictionary with attenuation instructions;
+    \item[\texttt{emission\_instructions}] is a dictionary with emission instructions~(see \cref{sec:emission});
+    \item[\texttt{integration\_step}] is step of volumetric integration in meters;
+    \item[\texttt{integration\_samples}] is a number of integration samples;
+    \item[\texttt{parent}] is a parent node;
+    \item[\texttt{transform}] is transformation matrix;
+    \item[\texttt{name}] is a name of this plasma.
+\end{itemize}
+\emph{Note: } for more information on \texttt{integration\_step} and \texttt{integration\_samples} refer to CHERAB's documentation on \href{https://cherab.github.io/documentation/plasmas/particle_beams.html?highlight=beam#cherab.core.Beam}{\texttt{Beam}}.
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/edge/raysect_edge_scenegraph.html?highlight=node#raysect.edge.scenegraph.node.Node}{\texttt{Node}}.
+
+At the time \texttt{Beam} supports model with only one beamlet and \texttt{create\_beam} is designed with this in mind.
+
+\end{document}

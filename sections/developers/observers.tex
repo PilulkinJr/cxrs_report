@@ -1,0 +1,332 @@
+\documentclass[../../main]{subfiles}
+
+\begin{document}
+Module \texttt{cxrs/observers} contains several files defining different observer classes built upon Raysect's \href{https://raysect.github.io/documentation/api_reference/optical/observers.html?highlight=observer}{observers}.
+
+\subsubsection{Base Class}%
+\label{sec:observers_base}
+
+File \texttt{observers/base} contains \texttt{ObserverGroup} class that represents a group of observers, for example CXRS sightlines. The class has \texttt{observe} method that is used to perform an observation by all observers in a group one by one and store the results. Methods \texttt{display} and \texttt{savetxt} are used to show registered spectra as an image or plot and save results in the text format respectively. They should be implemented in subclasses.
+
+Example:
+\begin{minted}{python}
+    ObserverGroup(
+        charge_exchange_ids=charge_exchange_ids,
+        config="config.xml",
+        wavelength_range=1,
+        relative_error=0.05,
+        scenario=scenario,
+        parent=world,
+        transform=None,
+        name="CXRS Edge Sightlines"
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{charge\_exchange\_ids}] is a \texttt{ChargeExchangeIDS} object~(\cref{sec:charge_exchange_ids}),
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{wavelength\_range}] is a number representing a wavelength range for observation (it is defined in a configuration file),
+    \item[\texttt{relative\_error}] is a minimal value of a desired relative error (if achieved relative error is higher than this value, number of pixel samples will be increased and observation will be performed again until desired relative error is achieved),
+    \item[\texttt{scenario}] is a dictionary containing all simulation labels: shot number, run number, time, used emission types, etc.,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/edge/raysect_edge_scenegraph.html?highlight=node#raysect.edge.scenegraph.node.Node}{\texttt{Node}}.
+
+\subsubsection{Sightlines}%
+\label{sec:sightlines}
+
+\begin{minted}{python}
+    sightlines = SightlineGroup(
+        ids=charge_exchange_ids,
+        config="config.xml",
+        wavelength_range=1,
+        relative_error=0.05,
+        scenario=scenario,
+        parent=world,
+        transform=None,
+        name="CXRS Sightlines",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{charge\_exchange\_ids}] is a \texttt{ChargeExchangeIDS} object~(\cref{sec:charge_exchange_ids}),
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{wavelength\_range}] is a number representing a wavelength range for observation (it is defined in a configuration file),
+    \item[\texttt{relative\_error}] is a minimal value of a desired relative error (if achieved relative error is higher than this value, number of pixel samples will be increased and observation will be performed again until desired relative error is achieved),
+    \item[\texttt{scenario}] is a dictionary containing all simulation labels: shot number, run number, time, used emission types, etc.,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+Methods:
+\begin{itemize}[align=left]
+    \item[\texttt{display}] used to show and save produced image(s):
+          \begin{minted}{python}
+SightlineGroup.display(
+    show=True,
+    save=True,
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{show}] -- show produced images in separate window;
+              \item[\texttt{save}] -- save images to a disk;
+              \item[\texttt{filename}] -- name of the file to save to. Image is saved in .png format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+
+    \item[\texttt{savetxt}] used to save simulation results in text format:
+          \begin{minted}{python}
+SightlineGroup.savetxt(
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{filename}] -- name of the file to save to. Text is saved in .txt format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+
+    \item[\texttt{draw\_scheme}] used to draw a simple scheme of a diagnostic:
+          \begin{minted}{python}
+SightlineGroup.draw_scheme(
+    plane="xy",
+    save=True,
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{plane}] -- produce a scheme in x-y ("xy") or r-z ("rz") plane;
+              \item[\texttt{save}] -- save images to a disk;
+              \item[\texttt{filename}] -- name of the file to save to. Image is saved in .png format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+\end{itemize}
+
+\subsubsection{Optics}%
+\label{sec:optics}
+
+\begin{minted}{python}
+    optics = OpticsAssembly(
+        target_distance=4.0,
+        aperture_radius=0.05,
+        magnification=0.1,
+        refractive_index=1.52,
+        parent=None,
+        transform=None,
+        name="Lens",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{target\_distance}] -- distance to a target in meters;
+    \item[\texttt{aperture\_radius}] -- radius of the aperture in meters;
+    \item[\texttt{magnification}] -- lens' magnification;
+    \item[\texttt{refractive\_index}] -- refractive index of the lens' material;
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/edge/raysect_edge_scenegraph.html?highlight=node#raysect.edge.scenegraph.node.Node}{\texttt{Node}}.
+
+\subsubsection{Fibres}%
+\label{sec:fibres}
+
+\begin{minted}{python}
+    fibres = FibreGroup(
+        ids=charge_exchange_ids,
+        config="config.xml",
+        wavelength_range=1,
+        relative_error=0.05,
+        scenario=scenario,
+        parent=world,
+        transform=None,
+        name="CXRS Fibres",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{charge\_exchange\_ids}] is a \texttt{ChargeExchangeIDS} object~(\cref{sec:charge_exchange_ids}),
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{wavelength\_range}] is a number representing a wavelength range for observation (it is defined in a configuration file),
+    \item[\texttt{relative\_error}] is a minimal value of a desired relative error (if achieved relative error is higher than this value, number of pixel samples will be increased and observation will be performed again until desired relative error is achieved),
+    \item[\texttt{scenario}] is a dictionary containing all simulation labels: shot number, run number, time, used emission types, etc.,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+Methods:
+\begin{itemize}[align=left]
+    \item[\texttt{display}] used to show and save produced image(s):
+          \begin{minted}{python}
+FibreGroup.display(
+    show=True,
+    save=True,
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{show}] -- show produced images in separate window;
+              \item[\texttt{save}] -- save images to a disk;
+              \item[\texttt{filename}] -- name of the file to save to. Image is saved in .png format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+
+    \item[\texttt{savetxt}] used to save simulation results in text format:
+          \begin{minted}{python}
+FibreGroup.savetxt(
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{filename}] -- name of the file to save to. Text is saved in .txt format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+
+    \item[\texttt{draw\_scheme}] used to draw a simple scheme of a diagnostic:
+          \begin{minted}{python}
+FibreGroup.draw_scheme(
+    plane="xy",
+    save=True,
+    filename="cxrs_sightlines",
+    dirname="output"
+)
+        \end{minted}
+          \begin{itemize}[align=left]
+              \item[\texttt{plane}] -- produce a scheme in x-y ("xy") or r-z ("rz") plane;
+              \item[\texttt{save}] -- save images to a disk;
+              \item[\texttt{filename}] -- name of the file to save to. Image is saved in .png format;
+              \item[\texttt{dirname}] -- name of the directory to save to.
+          \end{itemize}
+\end{itemize}
+
+\subsubsection{Camera}%
+\label{sec:camera}
+
+\begin{minted}{python}
+    ccd_camera = CCDCamera(
+        config="config.xml",
+        parent=world,
+        transform=None,
+        name="CXRS Fibres",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+\subsubsection{Other Observers}%
+\label{sec:other_observers}
+
+\begin{minted}{python}
+    fibre_bundle = FibreBundle(
+        core_radius=0.5e-3,
+        numerical_aperture=0.22,
+        spectrum=,
+        n_rows=3,
+        n_cols=1,
+        relative_error=0.05
+        parent=world,
+        transform=None,
+        name="CXRS Fibres",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{core\_radius}] -- radius of a fibre's core in meters;
+    \item[\texttt{numerical\_aperture}] -- fibre's numerical aperture;
+    \item[\texttt{spectrum}] -- Raysect's \href{https://raysect.github.io/documentation/api_reference/optical/main_optical_classes.html?highlight=spectrum#raysect.optical.spectrum.Spectrum}{\texttt{Spectrum}} object;
+    \item[\texttt{n\_rows}] -- number of rows;
+    \item[\texttt{n\_cols}] -- number of columns;
+    \item[\texttt{relative\_error}] -- desired relative error;
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+\begin{minted}{python}
+    scanner = Scanner(
+        ids=charge_exchange_ids,
+        config="config.xml",
+        range_vertical=0.2,
+        step_vertical=0.01,
+        relative_error=0.05,
+        scenario=scenario,
+        parent=world,
+        transform=None,
+        name="Scanner",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{charge\_exchange\_ids}] is a \texttt{ChargeExchangeIDS} object~(\cref{sec:charge_exchange_ids}),
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{range\_vertical}] -- vertical range in meters;
+    \item[\texttt{step\_vertical}] -- size of the scanning step in vertical direction;
+    \item[\texttt{relative\_error}] is a minimal value of a desired relative error (if achieved relative error is higher than this value, number of pixel samples will be increased and observation will be performed again until desired relative error is achieved),
+    \item[\texttt{scenario}] is a dictionary containing all simulation labels: shot number, run number, time, used emission types, etc.,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+\begin{minted}{python}
+    total_radiance = TotalRadianceSightlines(
+        ids=charge_exchange_ids,
+        config="config.xml",
+        relative_error=0.05,
+        scenario=scenario,
+        parent=world,
+        transform=None,
+        name="Scanner",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{charge\_exchange\_ids}] is a \texttt{ChargeExchangeIDS} object~(\cref{sec:charge_exchange_ids}),
+    \item[\texttt{config}] is a path to configuration file,
+    \item[\texttt{relative\_error}] is a minimal value of a desired relative error (if achieved relative error is higher than this value, number of pixel samples will be increased and observation will be performed again until desired relative error is achieved),
+    \item[\texttt{scenario}] is a dictionary containing all simulation labels: shot number, run number, time, used emission types, etc.,
+    \item[\texttt{parent}] is a parent node in a scenegraph,
+    \item[\texttt{transform}] is a transformation matrix,
+    \item[\texttt{name}] is a name for this group of observers.
+\end{itemize}
+
+\begin{minted}{python}
+    spectrometer = Spectrometer(
+        pixel_size=,
+        n_pixels=,
+        wl_calibration=,
+        int_calibration=,
+        width=,
+        inst_func="rect",
+        transmission=1.0,
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{pixel\_size}] ?
+    \item[\texttt{n\_pixels}] ?
+    \item[\texttt{wl\_calibration}] ?
+    \item[\texttt{int\_calibration}] ?
+    \item[\texttt{width}] ?
+    \item[\texttt{inst\_func}] ?
+    \item[\texttt{transmission}] ?
+\end{itemize}
+
+Methods: ?
+\end{document}

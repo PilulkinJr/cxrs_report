@@ -1,0 +1,29 @@
+\documentclass[../../main]{subfiles}
+
+\begin{document}
+File \texttt{cxrs/machine/pfc\_mesh.py} contains function \texttt{load\_pfc\_mesh} that is used to create a reactor wall model. All meshes are stored in \texttt{machine/portplugs} and \texttt{machine/simple} subfolders.
+
+\begin{minted}{python}
+    wall = load_pfc_mesh(
+        path=os.path.join(os.path.dirname(__file__)),
+        reflections=True,
+        roughness={"Be": 0.26, "W": 0.29, "Ss": 0.13},
+        detailed=False,
+        parent=world,
+        transform=None,
+        name="Wall",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{path}] is a path to .rsm mesh files;
+    \item[\texttt{reflections}] sets reflections on or off;
+    \item[\texttt{roughness}] is a roughness dictionary for PFC materials ("Be", "W", "Ss");
+    \item[\texttt{detailed}] -- Load the detailed wall model instead of the simple one;
+    \item[\texttt{parent}] is a parent node;
+    \item[\texttt{transform}] is a transformation matrix;
+    \item[\texttt{name}] is a name of this plasma.
+\end{itemize}
+Here \texttt{reflections} assigns material properties to appropriate wall segments if set to \texttt{True} and sets the wall as \href{https://raysect.github.io/documentation/api_reference/optical/optical_surfaces.html?highlight=absorber#raysect.optical.material.absorber.AbsorbingSurface}{perfect absorber} if set to \texttt{False}. It is used to effectively turn reflections on and off. \texttt{roughness} argument sets \href{https://raysect.github.io/documentation/demonstrations/materials/surface_roughness.html?highlight=rough}{\emph{roughness}} of the materials assigned to the wall segments (beryllium, tungsten and stainless steel).
+For more information on \texttt{parent}, \texttt{transform} and \texttt{name} refer to Raysect's documentation on \href{https://raysect.github.io/documentation/api_reference/edge/raysect_edge_scenegraph.html?highlight=node#raysect.edge.scenegraph.node.Node}{\texttt{Node}}.
+\end{document}
