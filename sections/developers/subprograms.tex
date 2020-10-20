@@ -106,9 +106,6 @@ Functions for creating plots and tables as placed in \texttt{cxrs/utility/info} 
     \item[\texttt{filename}] path to configuration file.
 \end{itemize}
 
-\subsubsection{\texttt{local\_copy}}
-\textbf{DEPRECATED}
-
 \subsubsection{\texttt{populate}}
 
 \paragraph{\texttt{main}} function is called when CLI is used:\\
@@ -120,15 +117,15 @@ It calls \texttt{populate\_more} function from \texttt{cxrs/populate/create.py} 
 Contain functions that are used to read necessary data from charge\_exchange and nbi IDSs. Designed for debug purposes.
 
 \paragraph{\texttt{cxs}} function is called when CLI is used:\\
-\mintinline{bash}{python -m cxrs read_ids -s 134000 -r 30 --cxs -o 0}\\
+\mintinline{bash}{python -m cxrs read_ids -s 1 -r 1 -u shabasa -d test --cxs -o 0}\\
 Prints all information related to diagnostic geometry stored in \texttt{charge\_exchange} IDS for requested pulse.
 
 \begin{minted}{python}
     cxs(
-        shot=134000,
-        run=30,
-        user="public",
-        database="iter",
+        shot=1,
+        run=1,
+        user="shabasa",
+        database="test",
         version="3",
         occurrence=0
     )
@@ -144,15 +141,15 @@ Prints all information related to diagnostic geometry stored in \texttt{charge\_
 \end{itemize}
 
 \paragraph{\texttt{nbi}} function is called when CLI is used:\\
-\mintinline{bash}{python -m cxrs read_ids -s 134000 -r 30 --nbi -o 0}\\
+\mintinline{bash}{python -m cxrs read_ids -s 1 -r 1 -u shabasa -d test --nbi -o 0}\\
 Prints all information related to DNB geometry and parameters stored in \texttt{nbi} IDS for requested pulse.
 
 \begin{minted}{python}
     nbi(
-        shot=134000,
-        run=30,
-        user="public",
-        database="iter",
+        shot=1,
+        run=1,
+        user="shabasa",
+        database="test",
         version="3",
         occurrence=0
     )
@@ -167,6 +164,61 @@ Prints all information related to DNB geometry and parameters stored in \texttt{
     \item[\texttt{occurrence}] IDS occurrence ID.
 \end{itemize}
 
+\subsubsection{\texttt{write\_ids}}
+
+Contain functions that are used to write \texttt{charge\_exchange} and \texttt{nbi} data from configuration file to appropriate IDSs.
+
+\paragraph{\texttt{cxs}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs write_ids -c config.xml -s 1 -r 1 -u shabasa -d test --cxs -o 0}\\
+Creates a \texttt{charge\_exchange} IDS instance in a local database with contents of the configuration file.
+
+\begin{minted}{python}
+    cxs(
+        shot=1,
+        run=1,
+        user="shabasa",
+        database="test",
+        version="3",
+        config="config.xml",
+        occurrence=0
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number;
+    \item[\texttt{config}] path to configuration file;
+    \item[\texttt{occurrence}] IDS occurrence ID.
+\end{itemize}
+
+\paragraph{\texttt{nbi}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs write_ids -c config.xml -s 1 -r 1 -u shabasa -d test --nbi -o 0}\\
+Creates a \texttt{nbi} IDS instance in a local database with contents of the configuration file.
+
+\begin{minted}{python}
+    nbi(
+        shot=1,
+        run=1,
+        user="shabasa",
+        database="test",
+        version="3",
+        config="config.xml",
+        occurrence=0
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number;
+    \item[\texttt{config}] path to configuration file;
+    \item[\texttt{occurrence}] IDS occurrence ID.
+\end{itemize}
 \subsubsection{\texttt{search}}
 
 Search for pulses that contain requested element by its symbol.
@@ -190,6 +242,50 @@ Prints list of pulses with their shot and run numbers. Uses \mintinline{bash}{sc
 \end{itemize}
 
 \subsubsection{\texttt{simulate}}
-\subsubsection{\texttt{write\_ids}}
+
+\paragraph{\texttt{main}} function is called when CLI is used:\\
+\mintinline{bash}{python -m cxrs simulate -s 134000 -r 30 -t -1 -c config.xml}\\
+Main routine for CXRS spectra simulation. Results are stored in \texttt{cxrs\_output/shot\_<shot>\_run\_<run>/time\_<time>} directory.
+
+\begin{minted}{python}
+    main(
+        shot=134000,
+        run=30,
+        time=-1.0,
+        user=134000,
+        database=134000,
+        version=134000,
+        config="config.xml",
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{shot}] IMAS database shot ID;
+    \item[\texttt{run}] IMAS database run ID;
+    \item[\texttt{time}] requested time;
+    \item[\texttt{user}] IMAS user ID;
+    \item[\texttt{database}] IMAS database ID;
+    \item[\texttt{version}] IMAS major version number;
+    \item[\texttt{config}] path to configuration file.
+\end{itemize}
+\emph{Note:} \mintinline{bash}{-t -1} can be used to choose time slice in the middle of the time range or it case when IDS contains only one time slice.
+
+\paragraph{\texttt{print\_parameters}} function is used to print simulation parameters defined in the configuration file to the stdout.
+
+\begin{minted}{python}
+    main(
+        user_options,
+        plasma_parameters,
+        beam_parameters,
+        emission_parameters
+    )
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{user\_options}] parameters from <user\_options> section of the configuration file;
+    \item[\texttt{plasma\_parameters}] parameters from <plasma\_paragrameters> section of the configuration file;
+    \item[\texttt{beam\_parameters}] parameters from <beam\_parameters> section of the configuration file;
+    \item[\texttt{emission\_parameters}] parameters from <emission\_parameters> section of the configuration file.
+\end{itemize}
 
 \end{document}

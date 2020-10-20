@@ -4,6 +4,8 @@
 \subsubsection{Getting Information on Plasma Parameters}%
 \label{sec:info}
 
+This module contains routines used by \mintinline{bash}{cxrs info} subprogram.
+
 \dirtree{%
     .1 info/.
     .2 \_\_init\_\_.py.
@@ -14,126 +16,401 @@
     .2 profiles.py.
 }
 
-beam.py
+\paragraph{\texttt{beam.py}} file contains \texttt{beam\_info} function designed to produce DNB related information for a model built for a simulation.
 
 \begin{minted}{python}
     beam_info(
-        plasma=,
-        id_dict=,
-        plot_dict=,
-        dirname=,
-        config=,
+        plasma=core_plasma,
+        id_dict = {
+            "shot": 134000,
+            "run": 30,
+            "user": "public",
+            "database": "iter",
+            "version": "3",
+        },
+        plot_dict={
+            "xlims": (4.0, 8.5),
+            "ylims": (-4.5, 4.5),
+            "resolution": 0.01,
+            "beam_slice": 0.5,
+        },
+        dirname="beam_info",
+        config="config.xml",
     )
 \end{minted}
 
 \begin{itemize}[align=left]
-    \item[\texttt{plasma}]
-    \item[\texttt{id\_dict}]
-    \item[\texttt{plot\_dict}]
-    \item[\texttt{dirname}]
-    \item[\texttt{config}]
+    \item[\texttt{plasma}] cherab's Plasma object;
+    \item[\texttt{id\_dict}] dictionary with IMAS IDs;
+    \item[\texttt{plot\_dict}] dictionary with plot parameters;
+    \item[\texttt{dirname}] path to save directory;
+    \item[\texttt{config}] path to configuration file.
 \end{itemize}
 
-equilibrium.py
+\paragraph{\texttt{equilibrium.py}} file contains \texttt{equilibrium\_info} function designed to produce equilibrium related information for a model built for a simulation.
 
 \begin{minted}{python}
     equilibrium_info(
-        id_dict=,
-        plot_dict=,
-        filename=,
-        dirname=,
+        id_dict = {
+            "shot": 134000,
+            "run": 30,
+            "user": "public",
+            "database": "iter",
+            "version": "3",
+        },
+        plot_dict={
+            "xlims": (4.0, 8.5),
+            "ylims": (-4.5, 4.5),
+            "resolution": 0.01,
+            "beam_slice": 0.5,
+        },
+        dirname="equilibrium_info",
+        filename=None,
     )
 \end{minted}
 
 \begin{itemize}[align=left]
-    \item[\texttt{id\_dict}]
-    \item[\texttt{plot\_dict}]
-    \item[\texttt{filename}]
-    \item[\texttt{dirname}]
+    \item[\texttt{id\_dict}] dictionary with IMAS IDs;
+    \item[\texttt{plot\_dict}] dictionary with plot parameters;
+    \item[\texttt{dirname}] path to save directory;
+    \item[\texttt{filename}] name of the produced file.
 \end{itemize}
 
-passive.py
+\paragraph{\texttt{passive.py}} file contains \texttt{passive\_info} function designed to produce passive charge-exchange related information for a model built for a simulation.
 
 \begin{minted}{python}
 passive_info(
-    plasma=,
-    beam=,
-    id_dict=,
-    plot_dict=,
-    dirname=,
+    plasma=core_plasma,
+    beam=beam,
+    id_dict = {
+        "shot": 134000,
+        "run": 30,
+        "user": "public",
+        "database": "iter",
+        "version": "3",
+    },
+    plot_dict={
+        "xlims": (4.0, 8.5),
+        "ylims": (-4.5, 4.5),
+        "resolution": 0.01,
+        "beam_slice": 0.5,
+    },
+    dirname="passive_info",
 )
 \end{minted}
 
 \begin{itemize}[align=left]
-    \item[\texttt{plasma}]
-    \item[\texttt{beam}]
-    \item[\texttt{id\_dict}]
-    \item[\texttt{plot\_dict}]
-    \item[\texttt{dirname}]
+    \item[\texttt{plasma}] CHERAB's \texttt{Plasma} object;
+    \item[\texttt{beam}] CHERAB's \texttt{Beam} object;
+    \item[\texttt{id\_dict}] dictionary with IMAS IDs;
+    \item[\texttt{plot\_dict}] dictionary with plot parameters;
+    \item[\texttt{dirname}] path to save directory;
 \end{itemize}
 
-profiles.py
+\paragraph{\texttt{profiles.py}} file contains \texttt{profiles\_info} function designed to produce plasma profiles.
 
 \begin{minted}{python}
 profiles_info(
-    core_plasma=,
-    edge_plasma=,
-    beam=,
-    id_dict=,
-    plot_dict=,
-    dirname=,
+    core_plasma=core_plasma,
+    edge_plasma=edge_plasma,
+    beam=beam,
+    id_dict = {
+        "shot": 134000,
+        "run": 30,
+        "user": "public",
+        "database": "iter",
+        "version": "3",
+    },
+    plot_dict={
+        "xlims": (4.0, 8.5),
+        "ylims": (-4.5, 4.5),
+        "resolution": 0.01,
+        "beam_slice": 0.5,
+    },
+    dirname="profiles",
 )
 \end{minted}
 
 \begin{itemize}[align=left]
-    \item[\texttt{core\_plasma}]
-    \item[\texttt{edge\_plasma}]
-    \item[\texttt{beam}]
-    \item[\texttt{id\_dict}]
-    \item[\texttt{plot\_dict}]
-    \item[\texttt{dirname}]
+    \item[\texttt{core\_plasma}] CHERAB's \texttt{Plasma} object for core plasma;
+    \item[\texttt{edge\_plasma}] CHERAB's \texttt{Plasma} object for edge plasma;
+    \item[\texttt{beam}] CHERAB's \texttt{Beam} object;
+    \item[\texttt{id\_dict}] dictionary with IMAS IDs;
+    \item[\texttt{plot\_dict}] dictionary with plot parameters;
+    \item[\texttt{dirname}] path to save directory;
 \end{itemize}
 
 \subsubsection{Parsing XML Configuration File}%
 \label{sec:xml}
 
-\mint{python}{srt2bool(string="on")}
-\mint{python}{bool2str(arg=True)}
+File \texttt{utility/xml.py} contains functions to work with configuration files. For XML parsing module \texttt{xml.etree} from Python's standard library is used.
+
+\mint{python}{srt2bool(string)}
+converts "on" to \mintinline{python}{True} and "off" to \mintinline{python}{False}.
+
+\mint{python}{bool2str(arg)}
+converts \mintinline{python}{True} to "on" and \mintinline{python}{False} to "off".
+
 \mint{python}{read_xml_entry(tree_element)}
+reads XML structure and returns Python object based on structure's description.
+
 \mint{python}{parse_user_options(section, config)}
+reads \texttt{<user\_options>} \texttt{section} from the configuration file and returns dictionary with its parameters.
+
 \mint{python}{parse_emission_lines(config)}
+reads \texttt{<emission\_lines>} section of the configuration file and returns list of CHERAB's \href{https://cherab.github.io/documentation/atomic/emission_lines.html?highlight=line#cherab.core.atomic.line.Line}{\texttt{Line}} objects.
+
 \mint{python}{parse_diagnostic_geometry(config)}
+reads \texttt{<geometry>} \texttt{section} from the configuration file and returns dictionary with its parameters.
+
 \mint{python}{parse_dnb_parameters(config)}
+reads \texttt{<DNB>} \texttt{section} from the configuration file and returns dictionary with its parameters.
+
 \mint{python}{parse_wavelength_ranges(config)}
+reads \texttt{<wavelength\_ranges>} \texttt{section} from the configuration file and returns dictionary with its parameters.
+
 
 \subsubsection{Setting Emission Parameters}%
 \label{sec:emission}
 
 \begin{minted}{python}
     plasma_emission_parameters = plasma_emission(
-        plasma=,
-        lines=,
-        bremsstrahlung=False,
-        recombination=False,
-        excitation=False,
-        passive=False,
+        plasma,
+        lines,
+        bremsstrahlung=True,
+        recombination=True,
+        excitation=True,
+        passive=True,
     )
 \end{minted}
 
 \begin{itemize}[align=left]
-    \item[\texttt{plasma}]
-    \item[\texttt{lines}]
-    \item[\texttt{bremsstrahlung}]
-    \item[\texttt{recombination}]
-    \item[\texttt{excitation}]
-    \item[\texttt{passive}]
+    \item[\texttt{plasma}] cherab's Plasma object;
+    \item[\texttt{lines}] list of cherab's Line objects;
+    \item[\texttt{bremsstrahlung}] turn Bremsstrahlung on;
+    \item[\texttt{recombination}] turn recombination emission on;
+    \item[\texttt{excitation}] turn excitation emission on;
+    \item[\texttt{passive}] turn passive emission on.
+\end{itemize}
+
+\begin{minted}{python}
+beam_emission_parameters = beam_emission(
+    plasma,
+    lines,
+)
+\end{minted}
+
+\begin{itemize}[align=left]
+    \item[\texttt{plasma}] cherab's Plasma object;
+    \item[\texttt{lines}] list of cherab's Line objects;
 \end{itemize}
 
 \subsubsection{Math Functions}%
 \label{sec:math}
 
+\mint{python}{to_cylindrical(point)}
+convert Raysect's Point3D from cartesian coordinates to cylindrical.
+
+\mint{python}{to_cylindrical_multiple(points)}
+convert list of Raysect's Point3D from cartesian coordinates to cylindrical.
+
+\mint{python}{to_cartesian(point)}
+convert Raysect's Point3D from cylindrical coordinates to cartesian.
+
+\mint{python}{to_cartesian_multiple(points)}
+convert list of Raysect's Point3D from cylindrical coordinates to cartesian.
+
+\begin{minted}{python}
+ion_temperature(
+    doppler_width,
+    natural_wavelength,
+    atomic_weight
+)
+\end{minted}
+
+Calculate impurity's ion temperature by Doppler width of observed spectral line: \\
+$T_\text{i} = m c^2 \left( \frac{\Delta \lambda}{\lambda_0} \right)^2$
+
+\begin{itemize}[align=left]
+    \item[\texttt{doppler\_width}] width of line's Doppler broadening in nm;
+    \item[\texttt{natural\_wavelength}] line's \enquote{natural} wavelength in nm;
+    \item[\texttt{atomic\_weight}] impurity's atomic weight.
+\end{itemize}
+
+\begin{minted}{python}
+velocity_edge(
+    natural_wavelength,
+    doppler_shift_upper,
+    doppler_shift_lower,
+    angle_upper,
+    angle_lower,
+)
+\end{minted}
+
+Calculate plasma bulk velocity at the edge:
+\begin{align*}
+    v_{\text{tor}} & = \frac{c}{\lambda_0} \frac{\Delta \lambda_{\text{upper}} \sin(\alpha_{\text{lower}}) + \Delta \lambda_{\text{lower}} \sin(\alpha_{\text{upper}})}{\sin(\alpha_{\text{upper}} + \alpha_{\text{lower}})} \\
+    v_{\text{pol}} & = \frac{c}{\lambda_0} \frac{\Delta \lambda_{\text{upper}} \cos(\alpha_{\text{lower}}) - \Delta \lambda_{\text{lower}} \cos(\alpha_{\text{upper}})}{\sin(\alpha_{\text{upper}} + \alpha_{\text{lower}})}
+\end{align*}
+
+\begin{itemize}[align=left]
+    \item[\texttt{natural\_wavelength}] line's \enquote{natural} wavelength in nm;
+    \item[\texttt{doppler\_shift\_upper}] Doppler shift in nm registered by upper diagnostic;
+    \item[\texttt{doppler\_shift\_lower}] Doppler shift in nm registered by lower diagnostic;
+    \item[\texttt{angle\_upper}] angle in rad between upper diagnostic's line of sight and toroidal direction;
+    \item[\texttt{angle\_lower}] angle in rad between lower diagnostic's line of sight and toroidal direction;
+\end{itemize}
+
+\begin{minted}{python}
+velocity_core(
+    doppler_shift
+    angle,
+    natural_wavelength,
+)
+\end{minted}
+
+Calculate plasma bulk velocity at the edge:
+$v = \frac{c}{\cos(\alpha)} \frac{\Delta \lambda}{\lambda_0}$
+
+\begin{itemize}[align=left]
+    \item[\texttt{doppler\_shift}] Doppler shift in nm registered by diagnostic;
+    \item[\texttt{angle}] angle in rad between diagnostic's line of sight and toroidal direction;
+    \item[\texttt{natural\_wavelength}] line's \enquote{natural} wavelength in nm.
+\end{itemize}
+
+\begin{minted}{python}
+lines_intersection(
+    start_a,
+    vector_a,
+    start_b,
+    vector_b,
+    cylindrical=False,
+)
+\end{minted}
+
+Find point of intersection between two lines. Lines are defined by starting point and direction vector: $\vec{r} = \vec{r_0} + \vec{a}t$.
+
+\begin{itemize}[align=left]
+    \item[\texttt{start\_a}] start point of the first line;
+    \item[\texttt{vector\_a}] direction vector of the first line;
+    \item[\texttt{start\_b}] start point of the second line;
+    \item[\texttt{vector\_b}] direction vector of the second line;
+    \item[\texttt{cylindrical}] return intersection point in cylindrical coordinates.
+\end{itemize}
+
+\begin{minted}{python}
+line_cylinder_intersection(
+    start, 
+    vector, 
+    radius, 
+    cylindrical=False
+)
+\end{minted}
+
+Find point of intersection between a line and a cylinder. Line is defined by starting point and direction vector: $\vec{r} = \vec{r_0} + \vec{a}t$. Cylinder's axis coincides with Z axis.
+
+\begin{itemize}[align=left]
+    \item[\texttt{start}] start point of the line;
+    \item[\texttt{vector}] direction vector of the line;
+    \item[\texttt{radius}] radius of the cylinder;
+    \item[\texttt{cylindrical}] return intersection point in cylindrical coordinates.
+\end{itemize}
+
+\begin{minted}{python}
+    tangency_to_cartesian(
+        point, 
+        tangency_radius, 
+        angle, 
+        direction
+    )
+\end{minted}
+
+Convert NBI IDS beam direction parameters to vector in cartesian coordinates.
+
+\begin{itemize}[align=left]
+    \item[\texttt{point}] Beam source point;
+    \item[\texttt{tangency\_radius}] Tangency radius (major radius where the central line of a NBI unit is tangent to a circle around the torus) [m];
+    \item[\texttt{angle}] Angle of inclination between a beamlet at the centre of the injection unit surface and the horizontal plane [rad];
+    \item[\texttt{direction}] Direction of the beam seen from above the torus: -1 = clockwise; 1 = counter clockwise.
+\end{itemize}
+
+\begin{minted}{python}
+    cartesian_to_tangency(point, vector)
+\end{minted}
+
+Convert beam direction vector in cartesian coordinates to NBI IDS parameters.
+
+\begin{itemize}[align=left]
+    \item[\texttt{point}] Beam source coordinates point [m];
+    \item[\texttt{vector}] Beam direction vector [m].
+\end{itemize}
+
+\begin{minted}{python}
+    convolve(data, kernel)
+\end{minted}
+
+Convolve without edge effects.
+
+\begin{itemize}[align=left]
+    \item[\texttt{data}] Data array;
+    \item[\texttt{kernel}] Kernel array.
+\end{itemize}
+
 \subsubsection{Fitting Routine}%
 \label{sec:fitting}
+
+\begin{minted}{python}
+    fit(
+        lines,
+        observer_groups,
+        atomic_data,
+        background=True,
+        fit_report=False,
+        dirname=None,
+        scenario=None,
+        save=True,
+    )
+\end{minted}
+
+Fit emission spectra and reconstruct plasma parameters.
+
+\begin{itemize}[align=left]
+    \item[\texttt{lines}] List of beam emission lines.
+    \item[\texttt{observer\_groups}] List of observer groups.
+    \item[\texttt{atomic\_data}] Atomic data object.
+    \item[\texttt{fit\_report}] If True, plot fit report. (Default value = False)
+    \item[\texttt{dirname}] Path to save directory. (Default value = None)
+    \item[\texttt{scenario}] Dictionary with scenario parameters. (Default value = None)
+    \item[\texttt{save}] If True, save results in image format. (Default value = True)
+\end{itemize}
+
+\mint{python}{find_nearest(array, value)}
+Find index of the \texttt{array} element with value closest to \texttt{value}.
+
+\mint{python}{background_model(wavelengths, spectrum)}
+Define model for background (Bremsstrahlung) fitting: $B(\lambda) = A / \lambda$.
+
+\begin{minted}{python}
+    reference_line_model(
+        line_label,
+        line_data,
+        wavelengths,
+        spectrum,
+        bg_model=None
+    )
+\end{minted}
+
+\begin{minted}{python}
+    def line_model(
+        line_label,
+        line_data,
+        reference_line_label,
+        reference_line_data,
+        wavelengths,
+        spectrum,
+        bg_model=None,
+    )
+\end{minted}
 
 \subsubsection{Others}%
 \label{sec:other}
