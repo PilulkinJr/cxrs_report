@@ -57,49 +57,52 @@ where $I(\lambda)$~--~intensity of the line, $n_\text{b}$~--~local neutral beam 
     \end{tabular}
 \end{table}
 
-\subsubsection{CXRS in ITER}
-The CXRS Edge diagnostic is a distributed system with components throughout the ITER tokamak complex. The primary viewing components (front-end optics) are installed in Equatorial port 3 (EP3), viewing the Diagnostic Neutral Beam (DNB) that enters the plasma in the neighboring section 4.
-Front-end optics consists of two light collecting systems: Upper and Lower. The scope of the 55.EC CXRS Edge diagnostic for Upper system ends at the image plane in the port interspace (11-L1-C03) where the collected signal is coupled into optical fibre bundles.
-For Lower system, however, 55.EC CXRS Edge diagnostic is responsible for light collection system, light transportation and detection. The collected signal is transported through optical fibre bundles to the Tritium building (Building 14 – Level 2 – Room 4), where the detection systems are located.
+% \subsubsection{CXRS in ITER}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.75\textwidth]{images/cxrs_edge_overview}
-    \caption{An overview of the CXRS Edge diagnostic design.}%
-    \label{fig:cxrs_edge_overview}
-\end{figure}
+% The CXRS Edge diagnostic is a distributed system with components throughout the ITER tokamak complex. The primary viewing components (front-end optics) are installed in Equatorial port 3 (EP3), viewing the Diagnostic Neutral Beam (DNB) that enters the plasma in the neighboring section 4.
+% Front-end optics consists of two light collecting systems: Upper and Lower. The scope of the 55.EC CXRS Edge diagnostic for Upper system ends at the image plane in the port interspace (11-L1-C03) where the collected signal is coupled into optical fibre bundles.
+% For Lower system, however, 55.EC CXRS Edge diagnostic is responsible for light collection system, light transportation and detection. The collected signal is transported through optical fibre bundles to the Tritium building (Building 14 – Level 2 – Room 4), where the detection systems are located.
+
+% \begin{figure}[h!tbp]
+%     \centering
+%     \includegraphics[width=0.75\textwidth]{images/cxrs_edge_overview}
+%     \caption{An overview of the CXRS Edge diagnostic design.}%
+%     \label{fig:cxrs_edge_overview}
+% \end{figure}
 
 \subsection{Development of the New Simulation Code}
-\subsubsection{Existing Code}
-Simulation of Spectra (SOS) code by M. G. von Hellermann~\cite{sos}
 
-Features:
+\subsubsection{Existing Code}
+
+The code that is primarily used for CXRS spectra simulation is Simulation of Spectra (SOS) by M. G. von Hellermann~\cite{sos}. Its main features are:
+
 \begin{itemize}
     \item Simulation takes into account many physical effects (halo effect, crossection effect, plume effect and others);
     \item Written in Matlab;
     \item Has Graphical User Interface~(\cref{fig:sos_interface}).
 \end{itemize}
 
-\begin{figure}[!ht]
+\begin{figure}[h!tbp]
     \centering
-    \includegraphics[width=0.75\textwidth]{images/sos_interface}
+    \includegraphics[width=0.5\textwidth]{images/sos_interface}
     \caption{SOS interface.}%
     \label{fig:sos_interface}
 \end{figure}
 
 \subsubsection{Motivation}
-Existing code (Simulation of Spectra~--~SOS) lacks some features:
+
+SOS is not completely suitable for use on ITER because it
 \begin{itemize}
-    \item Simplified plasma, tokamak and diagnostic geometry \\
+    \item Uses simplified plasma, tokamak and diagnostic geometry \\
           (e.g. elliptical plasma, point emission and others);
     \item Does not take reflections into account;
     \item Cannot use data from IMAS directly;
     \item Requires Matlab license, hard to extend by new developers.
 \end{itemize}
 
-The goal was to create an open and extensible simulation code using Python.
+The goal of this work was to create an open and extensible simulation code using Python.
 
-Sub goals:
+With sub goals:
 \begin{itemize}
     \item Implement interaction with IMAS database (read and write);
     \item Use IMAS data to create a plasma and diagnostic beam with spatial distributions;
@@ -107,13 +110,14 @@ Sub goals:
     \item Ensure that emission models include all physics already captured by SOS.
 \end{itemize}
 
+It was decided to use Raysect and CHERAB frameworks for Python for the development of the new code.
 
 \subsection{Raysect and CHERAB}
 
 \textbf{Raysect}~\cite{raysect} is a ray-tracing framework for Python designed for scientific purposes.
 \begin{itemize}
     \item Supports scientific ray-tracing of spectra from physical light sources such as plasmas.
-    \item Easily extensible, written with user customisation of materials and emissive sources in mind.
+    \item Easily extensible, written with user customization of materials and emissive sources in mind.
     \item Different observer types supported such as pinhole cameras and optical fibres.
 \end{itemize}
 
@@ -124,12 +128,12 @@ Provided models for Raysect:
     \item Physical emission models (active charge exchange, bremsstrahlung and more).
 \end{itemize}
 
-
 \begin{figure}
     \centering
-    \includegraphics[width=0.75\textwidth]{images/raysect_demo}
+    \includegraphics[width=0.5\textwidth]{images/raysect_demo}
     \caption{Demonstration of Raysect features.}%
     \label{fig:raysect_demo}
 \end{figure}
+
 
 \end{document}
